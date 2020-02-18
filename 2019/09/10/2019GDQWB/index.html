@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+<script>
+    (function(){
+        if(''){
+            if (prompt('请输入密码') !== ''){
+                alert('密码错误');
+                history.back();
+            }
+        }
+    })();
+</script>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="CTF,Crypto,Web,MISC,Writeup," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="连续五天打了护网杯、N1CTF、ByteCTF、广东省强网杯，也自闭了五天，书也不看了，课也不上了，逆向逆得一脸懵逼，尤其是广东省强网杯两道逆向实在打不动，这是一个菜鸡逆向手被逼做web的血泪故事（菜是原罪 Crypto相对来说比较容易，第一道hash（argon2）实在太强了服务器都跑不动，第三道RSA挺有意思的，打算有空单独写一下（咕咕咕），Web是第一次做，从入门到放弃，签了个到就放弃了，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2019GDQWB">
+<meta property="og:url" content="http://yoursite.com/2019/09/10/2019GDQWB/index.html">
+<meta property="og:site_name" content="feng&#39;s blog">
+<meta property="og:description" content="连续五天打了护网杯、N1CTF、ByteCTF、广东省强网杯，也自闭了五天，书也不看了，课也不上了，逆向逆得一脸懵逼，尤其是广东省强网杯两道逆向实在打不动，这是一个菜鸡逆向手被逼做web的血泪故事（菜是原罪 Crypto相对来说比较容易，第一道hash（argon2）实在太强了服务器都跑不动，第三道RSA挺有意思的，打算有空单独写一下（咕咕咕），Web是第一次做，从入门到放弃，签了个到就放弃了，">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2019-09-09T16:00:00.000Z">
+<meta property="article:modified_time" content="2020-02-18T05:47:23.494Z">
+<meta property="article:author" content="feng">
+<meta property="article:tag" content="CTF">
+<meta property="article:tag" content="Crypto">
+<meta property="article:tag" content="Web">
+<meta property="article:tag" content="MISC">
+<meta property="article:tag" content="Writeup">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/09/10/2019GDQWB/"/>
+
+
+
+
+
+  <title>2019GDQWB | feng's blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">feng's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/10/2019GDQWB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="feng">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/feng.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="feng's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">2019GDQWB</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-09-10T00:00:00+08:00">
+                2019-09-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>连续五天打了护网杯、N1CTF、ByteCTF、广东省强网杯，也自闭了五天，书也不看了，课也不上了，逆向逆得一脸懵逼，尤其是广东省强网杯两道逆向实在打不动，这是一个菜鸡逆向手被逼做web的血泪故事（菜是原罪</p>
+<p>Crypto相对来说比较容易，第一道hash（argon2）实在太强了服务器都跑不动，第三道RSA挺有意思的，打算有空单独写一下（咕咕咕），Web是第一次做，从入门到放弃，签了个到就放弃了，MISC纯属脑洞，RE自闭</p>
+</blockquote>
+<h2 id="Crypto"><a href="#Crypto" class="headerlink" title="Crypto"></a>Crypto</h2><h3 id="老王的秘密"><a href="#老王的秘密" class="headerlink" title="老王的秘密"></a>老王的秘密</h3><p><strong>shamir</strong>，没啥好说的直接解</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">shares &#x3D; [</span><br><span class="line">    &#39;1-fddc7d57594928fb74a507ab9cba0b28b92bb6e7b36a9925a105eeddac020e64&#39;,</span><br><span class="line">    &#39;3-84f82314003c9690eeacd823b22680ccbe93ac098cabdd0a992c095dde0031cf&#39;,</span><br><span class="line">    &#39;5-b0e2e8d2cadc91f8f2f357a42e26aeabaccbfa7731437298ca23d8a4a5424ce4&#39;,</span><br><span class="line">    &#39;7-810e7545213971a3c7c2dce3d0998764d0bc1e3b866b15ad0deebaa7abcf64c5&#39;,</span><br><span class="line">    &#39;9-b4da0bd03394e4bdfef92f16365e8811d9614f11b99111bcf8a4e68ba79626a2&#39;,</span><br><span class="line">    &#39;b-661069e7d491719759a3199be1f65ffb6db92d1b014abb4e33ca7e32f85ee276&#39;,</span><br><span class="line">    &#39;d-1f84ab9b467a4ec4de4451ed187987785b567bbdde0126d0722e3335a5307d68&#39;,</span><br><span class="line">    &#39;f-9001dc36dd28c5c5dd7333968e7263986f55dd79cd9be286d21f45e46f53c399&#39;]</span><br><span class="line">from secretsharing import PlaintextToHexSecretSharer</span><br><span class="line">print(PlaintextToHexSecretSharer.recover_secret(shares))</span><br></pre></td></tr></table></figure>
+
+<p>f1ag{25019971af01d63d4ea8ad95da516}</p>
+<h3 id="美好的回忆"><a href="#美好的回忆" class="headerlink" title="美好的回忆"></a>美好的回忆</h3><p>64bits块_CBC加密</p>
+<p>加密逻辑为</p>
+<p>C = XOR(M,key,iv)</p>
+<p>iv = C</p>
+<p>给出了前两组的明文、密文</p>
+<p>前两组加密逻辑为</p>
+<p>C1 = xor(M1,key,iv)</p>
+<p>C2 = xor(M2,key,C1)</p>
+<p>c1,c2,m1,m2已知，先异或出iv再异或出key再解密即可</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">f &#x3D; open(&#39;flag.txt.encrypted&#39;,&#39;rb&#39;)</span><br><span class="line">s &#x3D; f.read()</span><br><span class="line">print(s.encode(&#39;hex&#39;))</span><br><span class="line">f.close()</span><br><span class="line">c1 &#x3D; s[:8]</span><br><span class="line">c2 &#x3D; s[8:16]</span><br><span class="line">p &#x3D; &#39;have a good time&#39;</span><br><span class="line">p1 &#x3D; p[:8]</span><br><span class="line">p2 &#x3D; p[8:16]</span><br><span class="line">iv &#x3D; &#39;&#39;</span><br><span class="line">key &#x3D; &#39;&#39;</span><br><span class="line">for i in range(8):</span><br><span class="line">    iv +&#x3D; chr(ord(list(p1)[i]) ^ ord(list(p2)[i]) ^ ord(list(c2)[i]))</span><br><span class="line">    print(hex(ord(list(p1)[i]) ^ ord(list(p2)[i]) ^ ord(list(c2)[i])))</span><br><span class="line">for i in range(8):</span><br><span class="line">    key +&#x3D; chr(ord(list(p1)[i]) ^ ord(list(c1)[i]) ^ ord(list(iv)[i]))</span><br><span class="line">print(len(iv))</span><br><span class="line">print(len(key))</span><br><span class="line">print(key)</span><br><span class="line">print(key.encode(&#39;hex&#39;))</span><br><span class="line">print(iv.encode(&#39;hex&#39;))</span><br><span class="line">plain &#x3D; &#39;&#39;</span><br><span class="line">for i in range(len(s)&#x2F;8):</span><br><span class="line">    for j in range(8):</span><br><span class="line">        plain +&#x3D; chr(ord(list(s)[i*8+j]) ^ ord(list(key)[j]) ^ ord(list(iv)[j]))</span><br><span class="line">    iv &#x3D; s[i*8:(i+1)*8]</span><br><span class="line">print(plain)</span><br></pre></td></tr></table></figure>
+
+<p>flag{21cb8c804abb60be5c9befcc928ccf5b}</p>
+<h3 id="悲伤的结局"><a href="#悲伤的结局" class="headerlink" title="悲伤的结局"></a>悲伤的结局</h3><p>跟上一题一样的加密逻辑，不同的是给出了明文的尾部</p>
+<p>由于</p>
+<p>Cn = XOR(Mn,key,Cn-1)</p>
+<p>Cn-1 = XOR(Mn-1,key,Cn-2)</p>
+<p>有</p>
+<p>Mn-1 = XOR(Cn ,Cn-2,Mn)</p>
+<p>C已知直接从后往前逆推出明文</p>
+<p>还有一个小问题是尾部的padding,遍历一下可以异或出padding为’\x0a\x04\x04\x04\x04’，所以真正明文的尾部为’kee p away from xiaocui!\x0a\x04\x04\x04\x04’，如此就可解密</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">p &#x3D; &#39;kee p away from xiaocui!\x0a\x04\x04\x04\x04&#39;</span><br><span class="line">for i in range(len(p)-8):</span><br><span class="line">    print (hex(ord(list(p)[i])^ord(list(p)[i+8])))</span><br><span class="line">print(p.encode(&quot;hex&quot;))</span><br><span class="line">print(&#39;-----&#39;)</span><br><span class="line">f &#x3D; open(&#39;flag.txt.encrypted2&#39;,&#39;rb&#39;)</span><br><span class="line">s &#x3D; f.read()</span><br><span class="line">print(s.encode(&#39;hex&#39;))</span><br><span class="line">f.close()</span><br><span class="line">c &#x3D; []</span><br><span class="line">for i in range(len(s)&#x2F;8):</span><br><span class="line">    c.append(list(s[i*8:i*8+8]))</span><br><span class="line"></span><br><span class="line">p24 &#x3D; list(p[-8:])</span><br><span class="line">p23 &#x3D; list(p[-16:-8])</span><br><span class="line">p &#x3D; p24</span><br><span class="line">plain &#x3D; &#39;&#39;</span><br><span class="line"># plain &#x3D; &#39;rom xiaoc&#39;</span><br><span class="line">for i in range(2,25)[::-1]:</span><br><span class="line">    m &#x3D; &#39;&#39;</span><br><span class="line">    for j in range(8):</span><br><span class="line">        m +&#x3D; chr(ord(p[j])^ord(c[i][j])^ord(c[i-2][j]))</span><br><span class="line">    p &#x3D; list(m)</span><br><span class="line">    plain &#x3D; m + plain</span><br><span class="line">print(plain)</span><br></pre></td></tr></table></figure>
+
+<p>flag{0e82f1e5b75688b4e6d39c08f1651c93}</p>
+<h2 id="Web"><a href="#Web" class="headerlink" title="Web"></a>Web</h2><h3 id="小明又被拒绝了"><a href="#小明又被拒绝了" class="headerlink" title="小明又被拒绝了"></a>小明又被拒绝了</h3><p>修改cookie admin = 1</p>
+<p>伪造ip = 127.0.0.1</p>
+<p>get flag</p>
+<h3 id="免费的-ping一下"><a href="#免费的-ping一下" class="headerlink" title="免费的,ping一下"></a>免费的,ping一下</h3><p>过滤了空格，cat，flag等字符，用\和${IFS}绕过即可</p>
+<p>payload:<strong>111;gre\p${IFS}fla\g${IFS}/fla\g</strong></p>
+<h2 id="MISC"><a href="#MISC" class="headerlink" title="MISC"></a>MISC</h2><h3 id="完美的错误"><a href="#完美的错误" class="headerlink" title="完美的错误"></a>完美的错误</h3><p>题目提示了错位数组，看起来是base58，遍历一下即可</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">import string</span><br><span class="line">import base58</span><br><span class="line">base58_table &#x3D; &#39;123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz&#39;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def b58decode(cipher_text, table&#x3D;base58_table):</span><br><span class="line">    cipher_text &#x3D; cipher_text.translate(string.maketrans(table, base58_table))</span><br><span class="line">    return base58.b58decode(cipher_text)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">c &#x3D; &#39;RJv9mjS1bM9MZafGV77uTyDaapNLSk6t358j2Mdf1pbCByjEiVpX&#39;</span><br><span class="line">print(c)</span><br><span class="line">table &#x3D; base58_table</span><br><span class="line">for i in range(64):</span><br><span class="line">    table &#x3D; table[1:]+table[0]</span><br><span class="line">    print(b58decode(c, table))</span><br></pre></td></tr></table></figure>
+
+<p>flag{adb88f7b70a20983833a7615fb103e01}</p>
+<h3 id="撸啊撸"><a href="#撸啊撸" class="headerlink" title="撸啊撸"></a>撸啊撸</h3><p>图片隐含了一个ELF，ida打开</p>
+<p>提取字符串，遍历异或一下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">s &#x3D; &#39;938gce1&#96;872db99db&#96;b342d23c0g9g2d&#39;</span><br><span class="line">flag &#x3D; &#39;&#39;</span><br><span class="line">for i in range(0xff):</span><br><span class="line">    for j in s:</span><br><span class="line">        flag +&#x3D; chr(i^ord(j))</span><br><span class="line">    print(flag)</span><br><span class="line">    flag &#x3D; &#39;&#39;</span><br></pre></td></tr></table></figure>
+
+<p>发现异或到1的时候flag比较正常，包裹上flag{}提交</p>
+<p>flag{829fbd0a963ec88ecac253e32b1f8f3e}</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/CTF/" rel="tag"><i class="fa fa-tag"></i>CTF</a>
+          
+            <a href="/tags/Crypto/" rel="tag"><i class="fa fa-tag"></i>Crypto</a>
+          
+            <a href="/tags/Web/" rel="tag"><i class="fa fa-tag"></i>Web</a>
+          
+            <a href="/tags/MISC/" rel="tag"><i class="fa fa-tag"></i>MISC</a>
+          
+            <a href="/tags/Writeup/" rel="tag"><i class="fa fa-tag"></i>Writeup</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/09/03/RSA-Attack/" rel="next" title="CTF中RSA的一些攻击思路">
+                <i class="fa fa-chevron-left"></i> CTF中RSA的一些攻击思路
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/09/25/2019KCTFQ3/" rel="prev" title="KCTFQ3 第五题设计思路">
+                KCTFQ3 第五题设计思路 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/feng.jpg"
+                alt="feng" />
+            
+              <p class="site-author-name" itemprop="name">feng</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yifeng-lee" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:feng@m.scnu.edu.cn" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Crypto"><span class="nav-number">1.</span> <span class="nav-text">Crypto</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#老王的秘密"><span class="nav-number">1.1.</span> <span class="nav-text">老王的秘密</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#美好的回忆"><span class="nav-number">1.2.</span> <span class="nav-text">美好的回忆</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#悲伤的结局"><span class="nav-number">1.3.</span> <span class="nav-text">悲伤的结局</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Web"><span class="nav-number">2.</span> <span class="nav-text">Web</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#小明又被拒绝了"><span class="nav-number">2.1.</span> <span class="nav-text">小明又被拒绝了</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#免费的-ping一下"><span class="nav-number">2.2.</span> <span class="nav-text">免费的,ping一下</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MISC"><span class="nav-number">3.</span> <span class="nav-text">MISC</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#完美的错误"><span class="nav-number">3.1.</span> <span class="nav-text">完美的错误</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#撸啊撸"><span class="nav-number">3.2.</span> <span class="nav-text">撸啊撸</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright"><font color=black face=STLiti>Copyright &nbsp;</font><font color=black>&copy;</font> <font color=black face=STLiti><span itemprop="copyrightYear">2020</span></font>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder" style="font-family:STLiti;color:black;">feng . All Rights Reserved.</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

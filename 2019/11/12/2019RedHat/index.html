@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+<script>
+    (function(){
+        if(''){
+            if (prompt('请输入密码') !== ''){
+                alert('密码错误');
+                history.back();
+            }
+        }
+    })();
+</script>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="CTF,Writeup,Reverse," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="周末打了一下红帽杯，Reverse比较简单，解了XX、easyRE以及childRE，简略写了 下writeup  XX程序首先校验前四个字符是否在”qwertyuiopasdfghjklzxcvbnm1234567890”这个字符集 1v17 &#x3D; xxtea((__int64)Code, v3, (unsigned __int8 *)&amp;v30, &amp;Size);  之后">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2019RedHat部分Reverse writeup">
+<meta property="og:url" content="http://yoursite.com/2019/11/12/2019RedHat/index.html">
+<meta property="og:site_name" content="feng&#39;s blog">
+<meta property="og:description" content="周末打了一下红帽杯，Reverse比较简单，解了XX、easyRE以及childRE，简略写了 下writeup  XX程序首先校验前四个字符是否在”qwertyuiopasdfghjklzxcvbnm1234567890”这个字符集 1v17 &#x3D; xxtea((__int64)Code, v3, (unsigned __int8 *)&amp;v30, &amp;Size);  之后">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2019-11-11T16:00:00.000Z">
+<meta property="article:modified_time" content="2020-02-18T05:49:00.082Z">
+<meta property="article:author" content="feng">
+<meta property="article:tag" content="CTF">
+<meta property="article:tag" content="Writeup">
+<meta property="article:tag" content="Reverse">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/11/12/2019RedHat/"/>
+
+
+
+
+
+  <title>2019RedHat部分Reverse writeup | feng's blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">feng's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/12/2019RedHat/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="feng">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/feng.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="feng's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">2019RedHat部分Reverse writeup</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-11-12T00:00:00+08:00">
+                2019-11-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>周末打了一下红帽杯，Reverse比较简单，解了XX、easyRE以及childRE，简略写了 下writeup</p>
+</blockquote>
+<h2 id="XX"><a href="#XX" class="headerlink" title="XX"></a>XX</h2><p>程序首先校验前四个字符是否在”qwertyuiopasdfghjklzxcvbnm1234567890”这个字符集</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">v17 &#x3D; xxtea((__int64)Code, v3, (unsigned __int8 *)&amp;v30, &amp;Size);</span><br></pre></td></tr></table></figure>
+
+<p>之后进行xxtea加密，密钥为前四个字符，明文为输入的19个字符+0x00000013，密文为6*32bits，24个字符</p>
+<p>接下来是一个一一映射的关系，改变密文顺序，最后是一个比较简单的异或算法，结果与常量进行比较</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">*(_QWORD *)&amp;v30 &#x3D; 0xC0953A7C6B40BCCEi64;</span><br><span class="line">  v25 &#x3D; v20 - (_BYTE *)&amp;v30;</span><br><span class="line">  *((_QWORD *)&amp;v30 + 1) &#x3D; 0x3502F79120209BEFi64;</span><br><span class="line">  v26 &#x3D; 0i64;</span><br><span class="line">  v31 &#x3D; 0xC8021823;</span><br><span class="line">  v32 &#x3D; 0xFA5656E7;</span><br></pre></td></tr></table></figure>
+
+<p>直接还原出xxtea密文，爆破密钥，复杂度为36**4</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdbool.h&gt;</span><br><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#define MX \</span><br><span class="line">  ((z &gt;&gt; 5 ^ y &lt;&lt; 2) + (y &gt;&gt; 3 ^ z &lt;&lt; 4) ^ (sum ^ y) + (k[p &amp; 3 ^ e] ^ z))</span><br><span class="line">bool btea(unsigned int* v, int n, unsigned int* k) &#123;</span><br><span class="line">  unsigned int z &#x3D; v[n - 1], y &#x3D; v[0], sum &#x3D; 0, e, DELTA &#x3D; 0x9e3779b9;</span><br><span class="line">  unsigned int p, q;</span><br><span class="line">  if (n &gt; 1) &#123;</span><br><span class="line">    return 0;</span><br><span class="line">  &#125; else if (n &lt; -1) &#123;</span><br><span class="line">    n &#x3D; -n;</span><br><span class="line">    q &#x3D; 6 + 52 &#x2F; n;</span><br><span class="line">    sum &#x3D; q * DELTA;</span><br><span class="line">    while (sum !&#x3D; 0) &#123;</span><br><span class="line">      e &#x3D; (sum &gt;&gt; 2) &amp; 3;</span><br><span class="line">      for (p &#x3D; n - 1; p &gt; 0; p--)</span><br><span class="line">        z &#x3D; v[p - 1], y &#x3D; v[p] -&#x3D; MX;</span><br><span class="line">      z &#x3D; v[n - 1];</span><br><span class="line">      y &#x3D; v[0] -&#x3D; MX;</span><br><span class="line">      sum -&#x3D; DELTA;</span><br><span class="line">    &#125;</span><br><span class="line">    return 0;</span><br><span class="line">  &#125;</span><br><span class="line">  return 1;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main(int argc, char const* argv[]) &#123;</span><br><span class="line">  __uint8_t res[24] &#x3D; &#123;0xCE, 0xBC, 0x40, 0x6B, 0x7C, 0x3A, 0x95, 0xC0,</span><br><span class="line">                       0xEF, 0x9B, 0x20, 0x20, 0x91, 0xF7, 0x02, 0x35,</span><br><span class="line">                       0x23, 0x18, 0x02, 0xC8, 0xE7, 0x56, 0x56, 0xFA&#125;;</span><br><span class="line"></span><br><span class="line">  for (size_t i &#x3D; 23; i &gt; 0; i--) &#123;</span><br><span class="line">    for (size_t j &#x3D; 0; j &lt; i &#x2F; 3; j++) &#123;</span><br><span class="line">      res[i] ^&#x3D; res[j];</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  for (size_t i &#x3D; 0; i &lt; 24; i++) &#123;</span><br><span class="line">    printf(&quot;%x &quot;, res[i]);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  __uint8_t bteares[24] &#x3D; &#123;0&#125;;</span><br><span class="line">  bteares[2] &#x3D; *res;</span><br><span class="line">  *bteares &#x3D; res[1];</span><br><span class="line">  bteares[3] &#x3D; res[2];</span><br><span class="line">  bteares[1] &#x3D; res[3];</span><br><span class="line">  bteares[6] &#x3D; res[4];</span><br><span class="line">  bteares[4] &#x3D; res[5];</span><br><span class="line">  bteares[7] &#x3D; res[6];</span><br><span class="line">  bteares[5] &#x3D; res[7];</span><br><span class="line">  bteares[10] &#x3D; res[8];</span><br><span class="line">  bteares[8] &#x3D; res[9];</span><br><span class="line">  bteares[11] &#x3D; res[10];</span><br><span class="line">  bteares[9] &#x3D; res[11];</span><br><span class="line">  bteares[14] &#x3D; res[12];</span><br><span class="line">  bteares[12] &#x3D; res[13];</span><br><span class="line">  bteares[15] &#x3D; res[14];</span><br><span class="line">  bteares[13] &#x3D; res[15];</span><br><span class="line">  bteares[18] &#x3D; res[16];</span><br><span class="line">  bteares[16] &#x3D; res[17];</span><br><span class="line">  bteares[19] &#x3D; res[18];</span><br><span class="line">  bteares[17] &#x3D; res[19];</span><br><span class="line">  bteares[22] &#x3D; res[20];</span><br><span class="line">  bteares[20] &#x3D; res[21];</span><br><span class="line">  bteares[23] &#x3D; res[22];</span><br><span class="line">  bteares[21] &#x3D; res[23];</span><br><span class="line">  __uint32_t vres[6] &#x3D; &#123;0&#125;;</span><br><span class="line">  __uint32_t tmp[6] &#x3D; &#123;0&#125;;</span><br><span class="line">  for (size_t i &#x3D; 0; i &lt; 24; i +&#x3D; 4) &#123;</span><br><span class="line">    vres[i &#x2F; 4] &#x3D; bteares[i] + (((__uint32_t)bteares[i + 1]) &lt;&lt; 8) +</span><br><span class="line">                  (((__uint32_t)bteares[i + 2]) &lt;&lt; 16) +</span><br><span class="line">                  (((__uint32_t)bteares[i + 3]) &lt;&lt; 24);</span><br><span class="line">    tmp[i &#x2F; 4] &#x3D; vres[i &#x2F; 4];</span><br><span class="line">  &#125;</span><br><span class="line">  int index &#x3D; 0;</span><br><span class="line">  unsigned int key[4] &#x3D; &#123;0, 0, 0, 0&#125;;</span><br><span class="line">  __uint8_t vvv[36] &#x3D; &#123;0x71, 0x77, 0x65, 0x72, 0x74, 0x79, 0x75, 0x69, 0x6f,</span><br><span class="line">                       0x70, 0x61, 0x73, 0x64, 0x66, 0x67, 0x68, 0x6a, 0x6b,</span><br><span class="line">                       0x6c, 0x7a, 0x78, 0x63, 0x76, 0x62, 0x6e, 0x6d, 0x31,</span><br><span class="line">                       0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x30&#125;;</span><br><span class="line">  for (size_t i &#x3D; 0; i &lt; 36; i++) &#123;</span><br><span class="line">    for (size_t j &#x3D; 0; j &lt; 36; j++) &#123;</span><br><span class="line">      for (size_t k &#x3D; 0; k &lt; 36; k++) &#123;</span><br><span class="line">        for (size_t z &#x3D; 0; z &lt; 36; z++) &#123;</span><br><span class="line">          key[0] &#x3D; vvv[i] + (((__uint32_t)vvv[j]) &lt;&lt; 8) +</span><br><span class="line">                   (((__uint32_t)vvv[k]) &lt;&lt; 16) + (((__uint32_t)vvv[z]) &lt;&lt; 24);</span><br><span class="line">          for (size_t ii &#x3D; 0; ii &lt; 6; ii++) &#123;</span><br><span class="line">            vres[ii] &#x3D; tmp[ii];</span><br><span class="line">          &#125;</span><br><span class="line">          btea(vres, -6, key);</span><br><span class="line">          if (vres[0] &#x3D;&#x3D; key[0]) &#123;</span><br><span class="line">            puts(&quot;&quot;);</span><br><span class="line">            printf(&quot;%x%x&quot;, vres[0], vres[1]);</span><br><span class="line">            printf(&quot;%x%x&quot;, vres[2], vres[3]);</span><br><span class="line">            printf(&quot;%x%x\n&quot;, vres[4], vres[5]);</span><br><span class="line">            for (size_t ii &#x3D; 0; ii &lt; 6; ii++) &#123;</span><br><span class="line">              for (size_t jj &#x3D; 0; jj &lt; 4; jj++) &#123;</span><br><span class="line">                printf(&quot;%c&quot;, ((vres[ii] &gt;&gt; (jj * 8)) &amp; 0xff));</span><br><span class="line">              &#125;</span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>flag{CXX_and_++tea}</strong></p>
+<h2 id="easyRE"><a href="#easyRE" class="headerlink" title="easyRE"></a>easyRE</h2><p>main函数解出了一个提示还有彩蛋</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">➜  hmb .&#x2F;easyRE</span><br><span class="line"></span><br><span class="line">Info:The first four chars are &#96;flag&#96;</span><br><span class="line"></span><br><span class="line">continue!</span><br><span class="line"></span><br><span class="line">https:&#x2F;&#x2F;bbs.pediy.com&#x2F;thread-254172.htm</span><br><span class="line"></span><br><span class="line">You found me!!!</span><br><span class="line"></span><br><span class="line">bye bye~</span><br></pre></td></tr></table></figure>
+
+<p>根据提示最后发现了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">unsigned __int64 sub_400D35()</span><br><span class="line">&#123;</span><br><span class="line">  unsigned __int64 result; &#x2F;&#x2F; rax</span><br><span class="line">  unsigned int v1; &#x2F;&#x2F; [rsp+Ch] [rbp-24h]</span><br><span class="line">  int i; &#x2F;&#x2F; [rsp+10h] [rbp-20h]</span><br><span class="line">  int j; &#x2F;&#x2F; [rsp+14h] [rbp-1Ch]</span><br><span class="line">  unsigned int v4; &#x2F;&#x2F; [rsp+24h] [rbp-Ch]</span><br><span class="line">  unsigned __int64 v5; &#x2F;&#x2F; [rsp+28h] [rbp-8h]</span><br><span class="line"></span><br><span class="line">  v5 &#x3D; __readfsqword(0x28u);</span><br><span class="line">  v1 &#x3D; sub_43FD20(0LL) - qword_6CEE38;</span><br><span class="line">  for ( i &#x3D; 0; i &lt;&#x3D; 1233; ++i )</span><br><span class="line">  &#123;</span><br><span class="line">    sub_40F790(v1);</span><br><span class="line">    sub_40FE60();</span><br><span class="line">    sub_40FE60();</span><br><span class="line">    v1 &#x3D; (unsigned __int64)sub_40FE60() ^ 0x98765432;</span><br><span class="line">  &#125;</span><br><span class="line">  v4 &#x3D; v1;</span><br><span class="line">  if ( ((unsigned __int8)v1 ^ byte_6CC0A0[0]) &#x3D;&#x3D; 102 &amp;&amp; (HIBYTE(v4) ^ (unsigned __int8)byte_6CC0A3) &#x3D;&#x3D; 103 )</span><br><span class="line">  &#123;</span><br><span class="line">    for ( j &#x3D; 0; j &lt;&#x3D; 24; ++j )</span><br><span class="line">      sub_410E90((unsigned __int8)(byte_6CC0A0[j] ^ *((_BYTE *)&amp;v4 + j % 4)));</span><br><span class="line">  &#125;</span><br><span class="line">  result &#x3D; __readfsqword(0x28u) ^ v5;</span><br><span class="line">  if ( result )</span><br><span class="line">    sub_444020();</span><br><span class="line">  return result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>尝试解一下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">byte_6CC0A0 &#x3D; [0x40,0x35,0x20,0x56,0x5d,0x18,0x22,0x45,0x17,0x2f,0x24,0x6e,0x62,0x3c,0x27,0x54,0x48,0x6c,0x24,0x6e,0x72,0x3c,0x32,0x45,0x5b]</span><br><span class="line">v4 &#x3D; [byte_6CC0A0[0]^ord(&#39;f&#39;),byte_6CC0A0[1]^ord(&#39;l&#39;),byte_6CC0A0[2]^ord(&#39;a&#39;),byte_6CC0A0[3]^ord(&#39;g&#39;)]</span><br><span class="line">flag &#x3D; &#39;&#39;</span><br><span class="line">for i in range(len(byte_6CC0A0)):</span><br><span class="line">    flag+&#x3D;chr(byte_6CC0A0[i] ^v4[i%4])</span><br><span class="line">print (flag)</span><br></pre></td></tr></table></figure>
+
+<p><strong>flag{Act1ve_Defen5e_Test}</strong></p>
+<h2 id="childRE"><a href="#childRE" class="headerlink" title="childRE"></a>childRE</h2><p>前面是一个一一映射关系，改变输入字符串顺序，先不管</p>
+<p>之后对输入字符串反修饰C++ 符号名</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UnDecorateSymbolName(v5, outputString, 0x100u, 0);</span><br></pre></td></tr></table></figure>
+
+<p>限定输入长度为31，输出长度为62，之后是一个简单的比较算法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">do</span><br><span class="line">    &#123;</span><br><span class="line">      v14 &#x3D; outputString[v13];</span><br><span class="line">      v15 &#x3D; v14 % 23;</span><br><span class="line">      if ( a1234567890Qwer[v15] !&#x3D; *(_BYTE *)(v13 + 5368722552i64) )</span><br><span class="line">        _exit(v12);</span><br><span class="line">      if ( a1234567890Qwer[v14 &#x2F; 23] !&#x3D; *(_BYTE *)(v13 + 5368722488i64) )</span><br><span class="line">        _exit(v12 * v12);</span><br><span class="line">      ++v12;</span><br><span class="line">      ++v13;</span><br><span class="line">    &#125;</span><br><span class="line">    while ( v12 &lt; 0x3E );</span><br></pre></td></tr></table></figure>
+
+<p>先还原出c++函数名</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">src &#x3D;&#39;1234567890-&#x3D;!@#$%^&amp;*()_+qwertyuiop[]QWERTYUIOP&#123;&#125;asdfghjkl;\x27ASDFGHJKL:&quot;ZXCVBNM&lt;&gt;?zxcvbnm,.&#x2F;&#39;</span><br><span class="line">s1&#x3D; &#39;55565653255552225565565555243466334653663544426565555525555222&#39;</span><br><span class="line">s2&#x3D;&#39;(_@4620!08!6_0*0442!@186%%0@3&#x3D;66!!974*3234&#x3D;&amp;0^3&amp;1@&#x3D;&amp;0908!6_0*&amp;&#39;</span><br><span class="line">l &#x3D; []</span><br><span class="line">for i in range(62):</span><br><span class="line">    a &#x3D; src.find(s1[i])</span><br><span class="line">    b &#x3D; src.find(s2[i])</span><br><span class="line">    l.append(a*23+b)</span><br><span class="line">print(&#39;&#39;.join(map(chr,l)))</span><br></pre></td></tr></table></figure>
+
+<p>得到原函数名</p>
+<p>private: char * __thiscall R0Pxx::My_Aut0_PWN(unsigned char *)</p>
+<p>根据c++规范手撸修饰后的符号，得到</p>
+<p>?My_Aut0_PWN@R0Pxx@@AAEPADPAE@Z</p>
+<p>前面说过有一个一一映射的关系，懒得逆了，输入</p>
+<p>1234567890abcdefghijklmnopqrstu</p>
+<p>得到输出</p>
+<p>fg8hi94jk0lma52nobpqc6rsdtue731</p>
+<p>直接将结果映射回去得到真正的输入，md5得到flag</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">s1 &#x3D; &#39;fg8hi94jk0lma52nobpqc6rsdtue731&#39;</span><br><span class="line">s2 &#x3D; &#39;1234567890abcdefghijklmnopqrstu&#39;</span><br><span class="line">res &#x3D; &#39;?My_Aut0_PWN@R0Pxx@@AAEPADPAE@Z&#39;</span><br><span class="line"></span><br><span class="line">l &#x3D; [&#39;0&#39; for _ in range(31)]</span><br><span class="line">for i in range(31):</span><br><span class="line">    a &#x3D; s1[i]</span><br><span class="line">    l[s2.find(a)] &#x3D; res[i]</span><br><span class="line">input &#x3D; &#39;&#39;.join(l)</span><br><span class="line">print(&quot;flag&#123;%s&#125;&quot;%md5(input).hexdigest())</span><br></pre></td></tr></table></figure>
+
+<p><strong>flag{63b148e750fed3a33419168ac58083f5}</strong></p>
+<h2 id="Calc"><a href="#Calc" class="headerlink" title="Calc"></a>Calc</h2><p>这道题是赛后才搞出来的，cpp、stl太恶心（还是太菜了</p>
+<p>主要都是动态调试调出来的，程序逻辑大概就是输入三个整数然后计算</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">v24 &#x3D; (char *)x[0];</span><br><span class="line">  v25 &#x3D; (x[1] - x[0]) &gt;&gt; 2;</span><br><span class="line">  v26 &#x3D; z[0];</span><br><span class="line">  v27 &#x3D; (z[1] - z[0]) &gt;&gt; 2;</span><br><span class="line">  v28 &#x3D; (char *)y[0];</span><br><span class="line">  if ( v25 &#x3D;&#x3D; v27 )</span><br><span class="line">  &#123;</span><br><span class="line">    v30 &#x3D; v25 - 1;</span><br><span class="line">    if ( (int)v25 - 1 &lt; 0 )</span><br><span class="line">      goto LABEL_47;</span><br><span class="line">    v31 &#x3D; v30;</span><br><span class="line">    v32 &#x3D; (char *)z[0] + 4 * v30;</span><br><span class="line">    while ( *(_DWORD *)((char *)v32 + x[0] - z[0]) &#x3D;&#x3D; *v32 )</span><br><span class="line">    &#123;</span><br><span class="line">      --v30;</span><br><span class="line">      --v32;</span><br><span class="line">      if ( --v31 &lt; 0 )</span><br><span class="line">        goto LABEL_47;</span><br><span class="line">    &#125;</span><br><span class="line">    v29 &#x3D; *((_DWORD *)x[0] + v30) &lt; *((_DWORD *)z[0] + v30);</span><br><span class="line">  &#125;</span><br><span class="line">  else</span><br><span class="line">  &#123;</span><br><span class="line">    v29 &#x3D; v25 &lt; v27;</span><br><span class="line">  &#125;</span><br><span class="line">  if ( !v29 )</span><br><span class="line">    goto LABEL_47;</span><br><span class="line">  v35 &#x3D; (y[1] - y[0]) &gt;&gt; 2;</span><br><span class="line">  if ( v35 !&#x3D; v25 )</span><br><span class="line">  &#123;</span><br><span class="line">    v36 &#x3D; v35 &lt; v25;</span><br><span class="line">    goto LABEL_62;</span><br><span class="line">  &#125;</span><br><span class="line">  v37 &#x3D; v35 - 1;</span><br><span class="line">  if ( (int)v35 - 1 &lt; 0 )</span><br><span class="line">  &#123;</span><br><span class="line">LABEL_47:</span><br><span class="line">    v33 &#x3D; -1;</span><br><span class="line">    goto LABEL_48;</span><br><span class="line">  &#125;</span><br><span class="line">  v38 &#x3D; v37;</span><br><span class="line">  v39 &#x3D; (char *)x[0] + 4 * v37;</span><br><span class="line">  while ( *(_DWORD *)((char *)v39 + y[0] - x[0]) &#x3D;&#x3D; *v39 )</span><br><span class="line">  &#123;</span><br><span class="line">    --v37;</span><br><span class="line">    --v39;</span><br><span class="line">    if ( --v38 &lt; 0 )</span><br><span class="line">      goto LABEL_47;</span><br><span class="line">  &#125;</span><br><span class="line">  v36 &#x3D; *((_DWORD *)y[0] + v37) &lt; *((_DWORD *)x[0] + v37);</span><br></pre></td></tr></table></figure>
+
+<p>上面这一段是校验 输入的三个整数 x、y、z 中 x&lt;z &amp;&amp; y&lt;x</p>
+<p>接下来就是 加、减、乘、幂运算了，连蒙带猜理清了一些逻辑关系</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">v40 &#x3D; mul(&amp;v146, v135, x);                    &#x2F;&#x2F; v40 &#x3D; 3*x</span><br><span class="line">v41 &#x3D; mul(&amp;v143, v40, x);                     &#x2F;&#x2F; v41 &#x3D; 3*x*x</span><br><span class="line">v42 &#x3D; mul(&amp;v140, v41, y);                     &#x2F;&#x2F; v42 &#x3D; 3*x*x*y</span><br><span class="line">v43 &#x3D; pow(&amp;v137, y, v133);                    &#x2F;&#x2F; v43 &#x3D; y*y</span><br><span class="line">v44 &#x3D; mul(&amp;v161, v131, x);                    &#x2F;&#x2F; v44 &#x3D; 3*x</span><br><span class="line">v45 &#x3D; mul(&amp;v150, v44, v43);                   &#x2F;&#x2F; v45 &#x3D; 3*x*y*y</span><br><span class="line">………………</span><br><span class="line">v54 &#x3D; add(Memory, v124, y);                   &#x2F;&#x2F; v54 &#x3D; x+y</span><br><span class="line">v55 &#x3D; pow(&amp;v149, v54, v129);                  &#x2F;&#x2F; v55 &#x3D; (x+y)**3</span><br><span class="line">v154 &#x3D; v55;</span><br><span class="line">v56 &#x3D; mov(&amp;v163, v45);</span><br><span class="line">v57 &#x3D; sub(v55, v56);                          &#x2F;&#x2F; v57 &#x3D; (x+y)**3 - 3*x*y*y</span><br><span class="line">………………</span><br><span class="line">v60 &#x3D; sub(v122, v59);                         &#x2F;&#x2F; v60 &#x3D; (x+y)**3 - 3*x*y*y - 3*x*x*y</span><br></pre></td></tr></table></figure>
+
+<p>这一部分计算了 (x+y)*<em>3 - 3</em>x<em>y</em>y - 3<em>x</em>x*y</p>
+<p>下面还有一部分计算了 (z+4)<strong>3 - 12*(z</strong>2) - z*48 - 22</p>
+<p>最终校验两部分是否相等</p>
+<p>化简可以得到一个丢番图方程</p>
+<p>x<strong>3+y</strong>3-z**3 == 42</p>
+<p>参考<a href="https://en.wikipedia.org/wiki/Sums_of_three_cubes" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Sums_of_three_cubes</a></p>
+<p>得到结果</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">x &#x3D;&#x3D; 80435758145817515</span><br><span class="line">y &#x3D;&#x3D; 12602123297335631</span><br><span class="line">z &#x3D;&#x3D; 80538738812075974</span><br></pre></td></tr></table></figure>
+
+<p>flag{MD5(“804357581458175151260212329733563180538738812075974”).tolower()}</p>
+<p><strong>get flag flag{951e27be2b2f10b7fa22a6dc8f4682bd}</strong></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/CTF/" rel="tag"><i class="fa fa-tag"></i>CTF</a>
+          
+            <a href="/tags/Writeup/" rel="tag"><i class="fa fa-tag"></i>Writeup</a>
+          
+            <a href="/tags/Reverse/" rel="tag"><i class="fa fa-tag"></i>Reverse</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/09/25/2019KCTFQ3/" rel="next" title="KCTFQ3 第五题设计思路">
+                <i class="fa fa-chevron-left"></i> KCTFQ3 第五题设计思路
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/01/01/Win10-Install-Guide/" rel="prev" title="Win10-ReInstall-Guide">
+                Win10-ReInstall-Guide <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/feng.jpg"
+                alt="feng" />
+            
+              <p class="site-author-name" itemprop="name">feng</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yifeng-lee" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:feng@m.scnu.edu.cn" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#XX"><span class="nav-number">1.</span> <span class="nav-text">XX</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#easyRE"><span class="nav-number">2.</span> <span class="nav-text">easyRE</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#childRE"><span class="nav-number">3.</span> <span class="nav-text">childRE</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Calc"><span class="nav-number">4.</span> <span class="nav-text">Calc</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright"><font color=black face=STLiti>Copyright &nbsp;</font><font color=black>&copy;</font> <font color=black face=STLiti><span itemprop="copyrightYear">2020</span></font>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder" style="font-family:STLiti;color:black;">feng . All Rights Reserved.</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

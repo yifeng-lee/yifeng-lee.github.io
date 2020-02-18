@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+<script>
+    (function(){
+        if(''){
+            if (prompt('请输入密码') !== ''){
+                alert('密码错误');
+                history.back();
+            }
+        }
+    })();
+</script>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="CTF,Crypto,Writeup,Reverse," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Crypto AK指南DSA共r攻击得到x，对消息签名得到flag 123456789101112131415161718192021222324252627282930#coding&#x3D;utf8from Crypto.PublicKey import DSAfrom hashlib import sha1import gmpy2y &#x3D; 599989644227205674109">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2019SUCTF Crypto&amp;&amp;Reverse writeup">
+<meta property="og:url" content="http://yoursite.com/2019/08/24/2019SUCTF/index.html">
+<meta property="og:site_name" content="feng&#39;s blog">
+<meta property="og:description" content="Crypto AK指南DSA共r攻击得到x，对消息签名得到flag 123456789101112131415161718192021222324252627282930#coding&#x3D;utf8from Crypto.PublicKey import DSAfrom hashlib import sha1import gmpy2y &#x3D; 599989644227205674109">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2019-08-23T16:00:00.000Z">
+<meta property="article:modified_time" content="2020-02-18T08:15:38.612Z">
+<meta property="article:author" content="feng">
+<meta property="article:tag" content="CTF">
+<meta property="article:tag" content="Crypto">
+<meta property="article:tag" content="Writeup">
+<meta property="article:tag" content="Reverse">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/08/24/2019SUCTF/"/>
+
+
+
+
+
+  <title>2019SUCTF Crypto&&Reverse writeup | feng's blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">feng's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/24/2019SUCTF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="feng">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/feng.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="feng's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">2019SUCTF Crypto&&Reverse writeup</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-08-24T00:00:00+08:00">
+                2019-08-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Crypto-AK指南"><a href="#Crypto-AK指南" class="headerlink" title="Crypto AK指南"></a>Crypto AK指南</h2><h3 id="DSA"><a href="#DSA" class="headerlink" title="DSA"></a>DSA</h3><p>共r攻击得到x，对消息签名得到flag</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">#coding&#x3D;utf8</span><br><span class="line">from Crypto.PublicKey import DSA</span><br><span class="line">from hashlib import sha1</span><br><span class="line">import gmpy2</span><br><span class="line">y &#x3D; 59998964422720567410971392247588610270838161207397035632002275213137280191832120978879710500476700732252657163883040778110433361229025561528932261647267356601327288870079034283219825305854917122470476263679775684658309724956217086373271094822923565839520323861656876204763501285315938099749485745556365977385</span><br><span class="line">g &#x3D; 43389854742161278437795219923942481775415347045657754950101547258603126039442015413837081119910836292884272763216819814465391926154918568052023904893455646228551404626313275513364910490826315111525183581985725183125157061116286909065516135519389601010524077855226671936609315614619488171104373006393843535936</span><br><span class="line">p &#x3D; 89884656743115797306463115781658547652701352914216992134724261350662138610779037881598639133132443399775174755349212745086191371006305803101408979382417949745858915745624526163699132112106657340987225858815360563806509539737133045727525608405157417768282568991275850018080217110159142086149521127066321887933</span><br><span class="line">q &#x3D; 947518380736106120979020081716052995250920349441</span><br><span class="line">m3 &#x3D; 307693878875281197163704550997724119116</span><br><span class="line">m4 &#x3D; 27650803417371457807064002936379775828</span><br><span class="line">s3 &#x3D; 204284014447639360127701931752666127662919593553</span><br><span class="line">s4 &#x3D; 807037783913314060221428202522519970102697802927</span><br><span class="line">r &#x3D; 107149838461499022506747607203457736319293892939</span><br><span class="line">ds &#x3D; s4 - s3</span><br><span class="line">dm &#x3D; m4 - m3</span><br><span class="line">k &#x3D; gmpy2.mul(dm, gmpy2.invert(ds, q))</span><br><span class="line">k &#x3D; gmpy2.f_mod(k, q)</span><br><span class="line">tmp &#x3D; gmpy2.mul(k, s3) - m3</span><br><span class="line">x &#x3D; tmp * gmpy2.invert(r, q)</span><br><span class="line">x &#x3D; gmpy2.f_mod(x, q)</span><br><span class="line">print(x)</span><br><span class="line">print(k)</span><br><span class="line">mes &#x3D; 334436397493699539473999398012751306876</span><br><span class="line">r1 &#x3D; gmpy2.powmod(g,k,p)</span><br><span class="line">r1 &#x3D; r1 % q</span><br><span class="line">s1 &#x3D; (gmpy2.invert(k,q)*(mes+x*r))%q</span><br><span class="line">print(&#39;k&#39;,k)</span><br><span class="line">print(&#39;x&#39;,x)</span><br><span class="line">print(&#39;(%d, %d)&#39;%(r1,s1))</span><br><span class="line"># (1070334240122464358241089769633029668974770861682L, 1222791079228374886029529242891467967573428488490L)</span><br></pre></td></tr></table></figure>
+
+<h3 id="MT"><a href="#MT" class="headerlink" title="MT"></a>MT</h3><p>angr或z3求解</p>
+<h3 id="Prime"><a href="#Prime" class="headerlink" title="Prime"></a>Prime</h3><p>nc过去得到四组数据n1、n2、n3、n4，c1、c2、c3、c4</p>
+<p>其中 c = powmod(m,n,n) ，要求求出m1、m2、m3、m4</p>
+<p>发现n1、n2、n3、n4两两共因子，所以每个n都可以分解为诸如</p>
+<p>n = p * qp * qqp * qqq 的形式，由费马小定理求出phi，而后求逆元d，就可得到m</p>
+<p>m = powmod(c,n,n)</p>
+<p>代码写得比较丑，将就看吧</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">import gmpy2</span><br><span class="line">from Crypto.Util import number</span><br><span class="line"></span><br><span class="line">c0 &#x3D; 0x2e3413f85b4037231cf93b9c0a0e8d94535679b29747911dd1f189ac5e7b8358974b1f139f3af0e94024c5df6feb1f1f9e6494ae6aa6e99d14a83615e9893e3d8df5fe578b3fc3fb3888c34eb0da25ff8df62612830c21a9324c6738667cfd5e26096912aca966fd875e8fbd2c4e13bbc1979ffe4bda1c098c31033e80bbd086938eb1c9fe09ce5b7a10f7dd397deeb7d7be5e0cf6e1146218fd2ba1a9795c691005768dee8d21f5b888aca0660dcc14695ce9245a9b02dd69a722c9ba81966469b058776fdd439ab5a3b07d20ca9219e6573798401a44e04abc2ad362f54187b3e8ce6310d0c629fd5b89a8fb386ec21a1e18abe5f7d3c60bef510e9cc224</span><br><span class="line">c1 &#x3D; 0xb42983a2937314541bf7f31f00d3492eba055b974d2d27800490f2922faccce4982f7a9b1dc51a993bdc4ec1c6d2ce4dac9a1fe6a814bf3647ef2053b760411c8c05d93adb579aa4c6a2b0978f2db8e4ec64ee45849391a13a326926257999006e4f859122a3db531fbd3e71ff4654bf75572d41a5c96c2016dbdf2ddd0a7ab7526ed44b026075d48f983ecbddf6f4bab2cc33b89670cf0cc535073f063f762ce371b7c42906dfb0a06f51e28d7144d3e5769f30b69ded7cfb582296a9df23e91b13b35f7fa3220072fc5f9e4189a3c8aef8a47ef4a5a370f6e5967796d031b6e00a29505b69f6afd6e6ba0a6184a274b8ec912700c987cd356dffdf389ba1</span><br><span class="line">c2 &#x3D; 0x3b8950457e4232268b1b6cb44d6f0545eec55784054e551b7dc14db9bcba18b6271a6612e919cc0bbbb2028de47ec4e3e6d1add29ba59fd5c657da34efa20fec0858d5d717a9adb81f66b4a3f6e12bdb7dcca5f44b160d45674943ff10c55a9eb07adf65c310f208686de9da11618dd28fe0a370b4947428a27eea357571bbaf793ccbd1a671315a993da1d4c39239eda774d8c6a53249acd51c38c88aca166f172ca0447c7afeb82bda0f3fc0a3970d731971c1947ec50f00698c53c05bf5f90e2af15340c15bdfcb79f48b10a9320841069ed9448969dc1aaa8b09205279c1b93e296ffc5f5d4d7379bbb5536aba44f1c3c9b6499a14f45bfd761ebe10bf43</span><br><span class="line">c3 &#x3D; 0x183403f54b8a16fc6b9ba1b034c34991f1799df7416b03ec342d0f79d74b3ea329f983d4d5fc76f29908d3376b5e1d10b90ec6562c114962a758aad15e27e6b3086cdc9e9434f5de2f339f5038335d64845f5371d89a43e31fc098bdb022c989faf46bd5705d84b0b4b2b5de28556505c73cfe17e9b2cea83125852e494394ba3df8022c470d15295c2ac1b0b359e6b6072b5d4ce6324829429cbdd8639c72ed503cf0572607b2796da933e3152a2ae0895e999720e9e31445dde5e1d3042a53e85a2a32eb395742f3d4f643938ba9cb92da430ca154b0d7cfad07076e9d5d927ae80deaff1573b13343bf8e5c378b89cc6764d567984ab9b8a010a134efe6b</span><br><span class="line"></span><br><span class="line">n0 &#x3D; 0x16657186baf7838afac2496d178767b436f72eb3404f42230c69e2490f4623db38ba480b1b9a087fe2ce8eb6cdd5d8889f821cab6a903cc5d1db83ea996bc62e3146e557f91d2119bc62573e9afea867c5f3dd870a93169dbfee02f4f3a6b527e1ff30b6441456a4cd0ece51d0fcd1ac94945b7e10d7f537ce2597e32d1bb2d3468416328110d3e1b36e42c90e08446263854b357b8b2adce43cf6c8ecc5e05a96ad32317cdf4576c0d959072493cf96f99d6509581b8375796510937e8cddc87575c5bf02c6af18261eaab2a5bfe9b3e51909095aef351426b2e473ebe58bc2899d25fd31ceb2407e993afd0c0acbb9306313018f9e89fdcd7b9ad299f6015</span><br><span class="line">n1 &#x3D; 0xbae5ec9f4ef1c80612ec6980670bec41674eedcfbe8bfc389a9eff4e0558a52b97bb502e7550c715aaec555db9cf9d77557bbfa4ac7af5f624a5d29b9e7b527bd869cd07a58647f7a5af2ba1cbca566c89b6b362c696bcee414bae1bd4b351f71b451a989603ac3ed9591aa216feee60404ea60ea3f80ac46fab2ae2509a684ea189c8fd162254f36a2fd76e152260accdbfee3f9b8b3fa5246a66c86b03a72fc1a47eb5947ccd68faf8336ad55a9367d84d23b9e797c0be62f372891aade7adf5c940f0f0028875c52692f5aab57adbc4096de0cb774d070571dac490aa266407c9c82f39102cc6a00cb16cdc8ffe2eaa879126460a29634259d4bf4f99bd</span><br><span class="line">n2 &#x3D; 0x44290f36dd89d87461aae4a10f9f42054239c91e6faa94c30011b1f1b783a13d2fe61adf081ac8be829dd636bb9c7027aa79d20b16c2268dea978765ddc50187349c64afe98ad91f35fa7321e2db264e65e306c743e9e14e77e69a0f3db3dbbcb9d912f1c583071e650dd88f3a120457756140aa3feef2d4dd2249c8ac904d3825ae93ca96908c7d913bebd7a3c6d18e704f7df493a65fc39ae04af1c0a577b96ec284b8ab8b859372334a148b3dc0e000302622b25e8d1439a4d3d369bcffab7f279a2ace742fc5685f168a7caa487a55c4907456c30b1087c3f484180da55346bff2d095b95d1b708b36f199752eff06029af1676ea0128160b64477aef8d9</span><br><span class="line">n3 &#x3D; 0x25e93a809158fd8e8230441691867e95c53fee2052f1e4f3c0a383b5eeb2ef2ba54958941848e313b1bdbfc1843d254cd624ca25f9aac303ece3945ebd3c492e2ea06573f78c9de6d69ff176719671dacc51300a0cbc53ed942dd59f2edfbf5ba90a341a501c1c6754457263cddf34e401362c0655b3cafbd989dc6a632c5ee4698ef9b8d2f50c5c76ea0540506eee65b4faa80245b0b02b51e5304b7071cfe771a646a50d2721e04f1babcc1c66f79ccb748950dbae61d4eda6056ce28f12142a02a611c51bf6cb54c3465d6459da94536c92e29e27d07386bc39ba306608b9eb79520a5ad1533069ac272b9ba86142ff0632319256eb2fac0ff37d82e02c5</span><br><span class="line"></span><br><span class="line">p01 &#x3D; gmpy2.gcd(n0,n1)</span><br><span class="line">p02 &#x3D; gmpy2.gcd(n0,n2)</span><br><span class="line">p03 &#x3D; gmpy2.gcd(n0,n3)</span><br><span class="line">p12 &#x3D; gmpy2.gcd(n1,n2)</span><br><span class="line">p13 &#x3D; gmpy2.gcd(n1,n3)</span><br><span class="line">p23 &#x3D; gmpy2.gcd(n2,n3)</span><br><span class="line"></span><br><span class="line">def funs(n0,p01,p02,p03,c0):</span><br><span class="line">    q0 &#x3D; n0&#x2F;&#x2F;p01</span><br><span class="line">    q1 &#x3D; n0&#x2F;&#x2F;p02</span><br><span class="line">    q2 &#x3D; n0&#x2F;&#x2F;p03</span><br><span class="line"></span><br><span class="line">    qq1 &#x3D; gmpy2.gcd(q0,q1)</span><br><span class="line">    qq2 &#x3D; gmpy2.gcd(q0,q2)</span><br><span class="line"></span><br><span class="line">    qp1&#x3D;q0&#x2F;&#x2F;qq1</span><br><span class="line"></span><br><span class="line">    qpq &#x3D; gmpy2.gcd(qq1,qq2)</span><br><span class="line"></span><br><span class="line">    qpp &#x3D; qq1&#x2F;&#x2F;qpq</span><br><span class="line"></span><br><span class="line">    phi  &#x3D; (qpq-1)*(qpp-1)*(qp1-1)*(p01-1)</span><br><span class="line">    # print(phi)</span><br><span class="line">    d &#x3D; int(gmpy2.invert(n0,phi))</span><br><span class="line">    m &#x3D; hex(pow(c0,d,n0))[2:-1]</span><br><span class="line">    print(m)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">funs(n0,p01,p02,p03,c0)</span><br><span class="line">funs(n1,p01,p12,p13,c1)</span><br><span class="line">funs(n2,p02,p12,p23,c2)</span><br><span class="line">funs(n3,p13,p03,p23,c3)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># flag&#123;H0W_c1EV3R_Y0u_AR3_C0ngRatu1at10n5&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="RSA"><a href="#RSA" class="headerlink" title="RSA"></a>RSA</h3><p><strong>Least Significant Bit Oracle Attack</strong></p>
+<p>注意因为整除的缘故最后得到的值与实际值有一定偏差</p>
+<p>exp</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line">from string import hexdigits</span><br><span class="line">from hashlib import md5</span><br><span class="line">import gmpy2</span><br><span class="line">import re</span><br><span class="line">import time</span><br><span class="line"></span><br><span class="line">def hash(salt,part_hash):</span><br><span class="line">    for i in range(0xffffff):</span><br><span class="line">        s &#x3D; str(i)</span><br><span class="line">        if(md5(s + salt).hexdigest()[:5] &#x3D;&#x3D; part_hash):</span><br><span class="line">            return s;</span><br><span class="line">            break;</span><br><span class="line">            </span><br><span class="line">io&#x3D;remote(&#39;47.111.59.243&#39;,9421)</span><br><span class="line">t &#x3D; time.clock()</span><br><span class="line">line &#x3D; io.recvline()</span><br><span class="line">salt &#x3D; line[40:44]</span><br><span class="line">part_hash &#x3D; line[54:59]</span><br><span class="line">s &#x3D; hash(salt,part_hash)</span><br><span class="line">io.sendline(s)</span><br><span class="line">for i in range(3):</span><br><span class="line">    l &#x3D; io.recvuntil(&#39;Please input your option:&#39;,drop &#x3D;True )</span><br><span class="line">    pattern &#x3D; re.compile(r&#39;(?&lt;&#x3D;n &#x3D; )\d+\.?\d*&#39;)</span><br><span class="line">    print(l)</span><br><span class="line">    n &#x3D; int(pattern.findall(l)[0])</span><br><span class="line">    pattern &#x3D; re.compile(r&#39;(?&lt;&#x3D;e &#x3D; )\d+\.?\d*&#39;)</span><br><span class="line">    e &#x3D; int(pattern.findall(l)[0])</span><br><span class="line">    pattern &#x3D; re.compile(r&#39;(?&lt;&#x3D;c &#x3D; )\d+\.?\d*&#39;)</span><br><span class="line">    c &#x3D; int(pattern.findall(l)[0])</span><br><span class="line">    u &#x3D; n</span><br><span class="line">    l &#x3D; 0</span><br><span class="line">    d &#x3D; gmpy2.powmod(2,e,n)</span><br><span class="line">    m &#x3D; c</span><br><span class="line">    i &#x3D; 0</span><br><span class="line">    while u - l &gt; 1:</span><br><span class="line">        m &#x3D; (m*d)%n</span><br><span class="line">        io.sendline(&#39;D&#39;)</span><br><span class="line">        io.send(str(m)+&#39;\n&#39;)</span><br><span class="line">        res &#x3D; io.recvuntil(&#39;!&#39;,drop &#x3D; True)</span><br><span class="line">        if &#39;even&#39; in res:</span><br><span class="line">            u &#x3D; (u+l)&#x2F;2</span><br><span class="line">        else:</span><br><span class="line">            l &#x3D; (u+l)&#x2F;2</span><br><span class="line"></span><br><span class="line">    ans &#x3D; 0</span><br><span class="line">    for i in range(-1024,1025):</span><br><span class="line">        m &#x3D; u + i</span><br><span class="line">        if pow(m,e,n) &#x3D;&#x3D; c:</span><br><span class="line">            ans &#x3D; m</span><br><span class="line">            break</span><br><span class="line">    io.sendline(&#39;G&#39;)</span><br><span class="line">    io.send((str(ans)).strip(&#39;L&#39;)+&#39;\n&#39;)</span><br><span class="line">    res &#x3D; io.recvuntil(&#39;!&#39;,drop &#x3D; True)</span><br><span class="line">    print(res)</span><br><span class="line">    res &#x3D; io.recvline()</span><br><span class="line">    print(res)</span><br><span class="line">    res &#x3D; io.recvline()</span><br><span class="line">    print(res)</span><br><span class="line">    print(&#39;bye&#39;)</span><br><span class="line">print(&#39;[!]Timer:&#39;,round((time.clock()-t),2),&#39;s&#39;)</span><br><span class="line">io.close()</span><br></pre></td></tr></table></figure>
+
+<h2 id="Reverse"><a href="#Reverse" class="headerlink" title="Reverse"></a>Reverse</h2><h3 id="SignIn"><a href="#SignIn" class="headerlink" title="SignIn"></a>SignIn</h3><p>签到题，n可分解，直接求出明文</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">__int64 __fastcall main(__int64 a1, char **a2, char **a3)</span><br><span class="line">&#123;</span><br><span class="line">  char v4; &#x2F;&#x2F; [rsp+0h] [rbp-4A0h]</span><br><span class="line">  char v5; &#x2F;&#x2F; [rsp+10h] [rbp-490h]</span><br><span class="line">  char v6; &#x2F;&#x2F; [rsp+20h] [rbp-480h]</span><br><span class="line">  char v7; &#x2F;&#x2F; [rsp+30h] [rbp-470h]</span><br><span class="line">  char v8; &#x2F;&#x2F; [rsp+40h] [rbp-460h]</span><br><span class="line">  char v9; &#x2F;&#x2F; [rsp+B0h] [rbp-3F0h]</span><br><span class="line">  unsigned __int64 v10; &#x2F;&#x2F; [rsp+498h] [rbp-8h]</span><br><span class="line"></span><br><span class="line">  v10 &#x3D; __readfsqword(0x28u);</span><br><span class="line">  puts(&quot;[sign in]&quot;);</span><br><span class="line">  printf(&quot;[input your flag]: &quot;, a2);</span><br><span class="line">  __isoc99_scanf(&quot;%99s&quot;, &amp;v8);</span><br><span class="line">  sub_96A(&amp;v8, &amp;v9);</span><br><span class="line">  __gmpz_init_set_str(&amp;v7, &quot;ad939ff59f6e70bcbfad406f2494993757eee98b91bc244184a377520d06fc35&quot;, 16LL);</span><br><span class="line">  __gmpz_init_set_str(&amp;v6, &amp;v9, 16LL);</span><br><span class="line">  __gmpz_init_set_str(&amp;v4, &quot;103461035900816914121390101299049044413950405173712170434161686539878160984549&quot;, 10LL);</span><br><span class="line">  __gmpz_init_set_str(&amp;v5, &quot;65537&quot;, 10LL);</span><br><span class="line">  __gmpz_powm(&amp;v6, &amp;v6, &amp;v5, &amp;v4);</span><br><span class="line">  if ( (unsigned int)__gmpz_cmp(&amp;v6, &amp;v7) )</span><br><span class="line">    puts(&quot;GG!&quot;);</span><br><span class="line">  else</span><br><span class="line">    puts(&quot;TTTTTTTTTTql!&quot;);</span><br><span class="line">  return 0LL;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>exp</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">import gmpy2</span><br><span class="line">from binascii import unhexlify</span><br><span class="line"></span><br><span class="line">p &#x3D; 282164587459512124844245113950593348271</span><br><span class="line">q &#x3D; 366669102002966856876605669837014229419</span><br><span class="line">e &#x3D; 65537</span><br><span class="line">c &#x3D; 0xad939ff59f6e70bcbfad406f2494993757eee98b91bc244184a377520d06fc35</span><br><span class="line">d &#x3D; gmpy2.invert(e,(p-1)*(q-1))</span><br><span class="line">m &#x3D; gmpy2.powmod(c,d,p*q)</span><br><span class="line">print(&#39;flag:&#39;,unhexlify(hex(m).encode()[2:]).decode())</span><br></pre></td></tr></table></figure>
+
+<p>flag 为 <strong>suctf{Pwn_@_hundred_years}</strong></p>
+<h3 id="hardCPP"><a href="#hardCPP" class="headerlink" title="hardCPP"></a>hardCPP</h3><p><strong>ollvm</strong>混淆的题目，还有个简单的时间反调，但是F5之后可以直接看到关键的处理区域</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">v35 &#x3D; v38 ^ s[v36];</span><br><span class="line">v34 &#x3D; main::$_0::operator() const(&amp;v44, (unsigned int)v35);</span><br><span class="line">v33 &#x3D; main::$_1::operator() const(&amp;v42, (unsigned int)s[v38 - 1 + v36]);</span><br><span class="line">v24 &#x3D; main::$_1::operator() const(char)::&#123;lambda(int)#1&#125;::operator() const(&amp;v33, 7LL);</span><br><span class="line">v35 &#x3D; main::$_0::operator() const(char)::&#123;lambda(char)#1&#125;::operator() const(&amp;v34, (unsigned int)v24);</span><br><span class="line">v32 &#x3D; main::$_2::operator() const(&amp;v45, (unsigned int)v35);</span><br><span class="line">v31 &#x3D; main::$_2::operator() const(&amp;v45, (unsigned int)s[v38 - 1 + v36]);</span><br><span class="line">v25 &#x3D; main::$_2::operator() const(char)::&#123;lambda(char)#1&#125;::operator() const(&amp;v31, 18LL);</span><br><span class="line">v30 &#x3D; main::$_3::operator() const(&amp;v43, (unsigned int)v25);</span><br><span class="line">v26 &#x3D; main::$_3::operator() const(char)::&#123;lambda(char)#1&#125;::operator() const(&amp;v30, 3LL);</span><br><span class="line">v29 &#x3D; main::$_0::operator() const(&amp;v44, (unsigned int)v26);</span><br><span class="line">v27 &#x3D; main::$_0::operator() const(char)::&#123;lambda(char)#1&#125;::operator() const(&amp;v29, 2LL);</span><br><span class="line">v35 &#x3D; main::$_2::operator() const(char)::&#123;lambda(char)#1&#125;::operator() const(&amp;v32, (unsigned int)v27);</span><br></pre></td></tr></table></figure>
+
+<p>对算法进行逆向，可以得到</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">for i in range(0x20):</span><br><span class="line">	flag[i+1]+(flag[i]%7)^(flag[i]^18)*3+2 &#x3D;&#x3D; enc[i]</span><br></pre></td></tr></table></figure>
+
+<p>很容易就可以得到输入为<code>#flag{mY-CurR1ed_Fns}</code></p>
+<p>flag为 <strong>flag{mY-CurR1ed_Fns}</strong></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/CTF/" rel="tag"><i class="fa fa-tag"></i>CTF</a>
+          
+            <a href="/tags/Crypto/" rel="tag"><i class="fa fa-tag"></i>Crypto</a>
+          
+            <a href="/tags/Writeup/" rel="tag"><i class="fa fa-tag"></i>Writeup</a>
+          
+            <a href="/tags/Reverse/" rel="tag"><i class="fa fa-tag"></i>Reverse</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/08/01/2019KanXueQ2-RCTF-SCTF/" rel="next" title="2019KanXueQ2-RCTF-SCTF">
+                <i class="fa fa-chevron-left"></i> 2019KanXueQ2-RCTF-SCTF
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/08/30/TEA/" rel="prev" title="微型加密算法及其逆向分析">
+                微型加密算法及其逆向分析 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/feng.jpg"
+                alt="feng" />
+            
+              <p class="site-author-name" itemprop="name">feng</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yifeng-lee" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:feng@m.scnu.edu.cn" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Crypto-AK指南"><span class="nav-number">1.</span> <span class="nav-text">Crypto AK指南</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#DSA"><span class="nav-number">1.1.</span> <span class="nav-text">DSA</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MT"><span class="nav-number">1.2.</span> <span class="nav-text">MT</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Prime"><span class="nav-number">1.3.</span> <span class="nav-text">Prime</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RSA"><span class="nav-number">1.4.</span> <span class="nav-text">RSA</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reverse"><span class="nav-number">2.</span> <span class="nav-text">Reverse</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SignIn"><span class="nav-number">2.1.</span> <span class="nav-text">SignIn</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#hardCPP"><span class="nav-number">2.2.</span> <span class="nav-text">hardCPP</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright"><font color=black face=STLiti>Copyright &nbsp;</font><font color=black>&copy;</font> <font color=black face=STLiti><span itemprop="copyrightYear">2020</span></font>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder" style="font-family:STLiti;color:black;">feng . All Rights Reserved.</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

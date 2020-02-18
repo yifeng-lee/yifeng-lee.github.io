@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+<script>
+    (function(){
+        if(''){
+            if (prompt('请输入密码') !== ''){
+                alert('密码错误');
+                history.back();
+            }
+        }
+    })();
+</script>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="CTF,Reverse," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="暑假无聊花了几个小时出了一道题，半天就被dalao秒了，tql！所幸还苟到了前九，以下的设计思路和解题思路  题目答案:VXX&#x2F;8AKlVXV8&#x2F;wCpVXV9&#x2F;DCogeWKJMtrmeY&#x3D; 设计思路:输入一个字符串，第一个check，check长度是否小于等于48，第二个check使用了梅森翻转算法、xxtea加密算法，check字符串的第一个字节，以第一个字节作为随机数种子，由梅森翻转算法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="KCTFQ3 第五题设计思路">
+<meta property="og:url" content="http://yoursite.com/2019/09/25/2019KCTFQ3/index.html">
+<meta property="og:site_name" content="feng&#39;s blog">
+<meta property="og:description" content="暑假无聊花了几个小时出了一道题，半天就被dalao秒了，tql！所幸还苟到了前九，以下的设计思路和解题思路  题目答案:VXX&#x2F;8AKlVXV8&#x2F;wCpVXV9&#x2F;DCogeWKJMtrmeY&#x3D; 设计思路:输入一个字符串，第一个check，check长度是否小于等于48，第二个check使用了梅森翻转算法、xxtea加密算法，check字符串的第一个字节，以第一个字节作为随机数种子，由梅森翻转算法">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2019-09-24T16:00:00.000Z">
+<meta property="article:modified_time" content="2020-02-18T05:47:03.868Z">
+<meta property="article:author" content="feng">
+<meta property="article:tag" content="CTF">
+<meta property="article:tag" content="Reverse">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/09/25/2019KCTFQ3/"/>
+
+
+
+
+
+  <title>KCTFQ3 第五题设计思路 | feng's blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">feng's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/25/2019KCTFQ3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="feng">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/feng.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="feng's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">KCTFQ3 第五题设计思路</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-09-25T00:00:00+08:00">
+                2019-09-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>暑假无聊花了几个小时出了一道题，半天就被dalao秒了，tql！所幸还苟到了前九，以下的设计思路和解题思路</p>
+</blockquote>
+<p><strong>题目答案:VXX/8AKlVXV8/wCpVXV9/DCogeWKJMtrmeY=</strong></p>
+<h3 id="设计思路"><a href="#设计思路" class="headerlink" title="设计思路:"></a>设计思路:</h3><p>输入一个字符串，第一个check，check长度是否小于等于48，第二个check使用了梅森翻转算法、xxtea加密算法，check字符串的第一个字节，以第一个字节作为随机数种子，由梅森翻转算法得到三个32bits整数，将第一个、第三个整数通过xxtea加密，密钥直接给出，为{0X67452301, 0XEFCDAB89, 0X98BADCFE, 0X10325476}，得到的结果相加得到v，由梅森翻转算法得到的第二个整数减去v得到res，检查是否等于2768546039，梅森翻转算法得到的随机数可预测，xxtea可逆，但是sn限定字符集为[33,126]，直接正向爆破秒解。第三个check，check输入的字符串与”Welcome/to/this/very/simple/challenge”相加之后的md5是否等于44e4403b63620a2075d3fb2e0a6207d2，此处不可逆，主要是check长度，直接跳过上面的check逆下面的算法就可以得到sn，所以直到此处所有的check几乎都是无用的，纯属误导。</p>
+<p>以下是真正的check且可逆，首先程序将输入的字符串取前36个字节base64decode，得到decode后的字节，应为26bytes，（此处暴露了sn长度应该为36个字节），之后对这26个字节进行分割，分割为v1，v2，v3，c，分别为6、6、6、8个字节，对输入的36个字节的前二十四个进行分割，分割为key1，key2，key3，均为8字节，之后进行3DES解密，密钥为key1key2key3，密文为c，即des_decrypt(key3,c),des_encrypt(key2,c),des_crypt(key3,c),最终得到的c为8字节明文，这里视为v4，之后是md5校验（此处如上所说并没有用），最终的校验是4个迷宫check，将上述得到的v1，v2，v3，v4分别送入迷宫check，正确的话预设值+1，最终检验预设值是否为4，即四个迷宫都要走完，迷宫均为13*13矩阵，起点为‘@’,终点为‘#’，除第一个显示给出外，其余三个均为在第一个迷宫的基础上动态生成。</p>
+<h3 id="解题思路："><a href="#解题思路：" class="headerlink" title="解题思路："></a>解题思路：</h3><p>去混淆，整理出四个迷宫，依据迷宫规则推导出v1，v2，v3，v4，其中v1、v2、v3为6bytes，v4为8bytes，前三个迷宫有且只有一条长度为18的路径，第四个迷宫有且只有一条长度为24的路径，至于v1、v2、v3、v4的长度由程序可以直接得到，根据迷宫规则目测即可非常快速的得到路径，也可写脚本得到，之后对v1、v2、v3分别进行base64encode得到key1，key2，key3，对v4进行3des加密，密钥为key1，key2，key3，最后对得到的结果c进行base64encode得到一个12bytes的字符串，将key1，key2，key3和c拼接就可得到长度为36bytes的sn</p>
+<p>四个迷宫分别为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line">maze1:</span><br><span class="line">*************</span><br><span class="line">*@***********</span><br><span class="line">*-***********</span><br><span class="line">*--**----****</span><br><span class="line">*-***-**-****</span><br><span class="line">*-***#**-****</span><br><span class="line">*--*****-****</span><br><span class="line">**-*****-****</span><br><span class="line">**-------****</span><br><span class="line">**-*-----****</span><br><span class="line">**---**-*****</span><br><span class="line">**-****--****</span><br><span class="line">*************</span><br><span class="line"></span><br><span class="line">maze2:</span><br><span class="line">*************</span><br><span class="line">*@***********</span><br><span class="line">*-***********</span><br><span class="line">*-***-**-****</span><br><span class="line">*--**----****</span><br><span class="line">*-***#**-****</span><br><span class="line">*--*****-****</span><br><span class="line">**-*****-****</span><br><span class="line">**-*-----****</span><br><span class="line">**---**-*****</span><br><span class="line">**-------****</span><br><span class="line">**-****--****</span><br><span class="line">*************</span><br><span class="line"></span><br><span class="line">maze3:</span><br><span class="line">*************</span><br><span class="line">*@***********</span><br><span class="line">*-***********</span><br><span class="line">*-***-**-****</span><br><span class="line">*--*****-****</span><br><span class="line">*-***#**-****</span><br><span class="line">*--**----****</span><br><span class="line">**-*****-****</span><br><span class="line">**-****--****</span><br><span class="line">**---**-*****</span><br><span class="line">**-*-----****</span><br><span class="line">**-------****</span><br><span class="line">*************</span><br><span class="line"></span><br><span class="line">maze4:</span><br><span class="line">*************</span><br><span class="line">**-------****</span><br><span class="line">*--*****-****</span><br><span class="line">*-***-**-****</span><br><span class="line">*--*****-****</span><br><span class="line">*-***#**-****</span><br><span class="line">*-***-**-****</span><br><span class="line">*-***-**-****</span><br><span class="line">*--**----****</span><br><span class="line">**---**-*****</span><br><span class="line">*--*****-****</span><br><span class="line">*@***********</span><br><span class="line">*************</span><br></pre></td></tr></table></figure>
+
+<p>很容易得到四个迷宫的最短路径为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ssss sdss dddd ddww wwwa aass</span><br><span class="line"></span><br><span class="line">ssss sdss sddw dddd wwww aaas</span><br><span class="line"></span><br><span class="line">ssss sdss sdds dddw wdww aaaw</span><br><span class="line"></span><br><span class="line">wdww awww wwwd wddd ddds ssss ssaa awww</span><br></pre></td></tr></table></figure>
+
+<p>迷宫规则为 <strong>00 w 01 s 10 a 11 d</strong></p>
+<p>所以可以得到<strong>4</strong>个迷宫check的内容分别为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">v1 &#x3D; b&#39;\x55\x75\xff\xf0\x02\xa5&#39;</span><br><span class="line"></span><br><span class="line">v2 &#x3D; b&#39;\x55\x75\x7c\xff\x00\xa9&#39;</span><br><span class="line"></span><br><span class="line">v3 &#x3D; b&#39;\x55\x75\x7d\xfc\x30\xa8&#39;</span><br><span class="line"></span><br><span class="line">v4 &#x3D; b&#39;\x30\x80\x03\x3f\xfd\x55\x5a\x80&#39;</span><br></pre></td></tr></table></figure>
+
+<p>接下来就是DES3加密了，key为<strong>base64encode(v1+v2+v3)</strong>,m为<strong>v4</strong></p>
+<p><strong>sn = key + base64encode(v4)</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">import base64</span><br><span class="line">from Crypto.Cipher import DES3</span><br><span class="line">from hashlib import md5</span><br><span class="line"></span><br><span class="line">v1 &#x3D; b&#39;\x55\x75\xff\xf0\x02\xa5&#39;</span><br><span class="line">v2 &#x3D; b&#39;\x55\x75\x7c\xff\x00\xa9&#39;</span><br><span class="line">v3 &#x3D; b&#39;\x55\x75\x7d\xfc\x30\xa8&#39;</span><br><span class="line">v4 &#x3D; b&#39;\x30\x80\x03\x3f\xfd\x55\x5a\x80&#39;</span><br><span class="line">key &#x3D; base64.b64encode(v1+v2+v3)</span><br><span class="line">print(&#39;key:&#39;,key)</span><br><span class="line">print(&#39;m:&#39;,v4)</span><br><span class="line">c &#x3D; DES3.new(key, DES3.MODE_ECB)</span><br><span class="line">cipher &#x3D; base64.b64encode(c.encrypt(v4))</span><br><span class="line">sn &#x3D; key + cipher</span><br><span class="line">assert(md5(sn+b&#39;Welcome&#x2F;to&#x2F;this&#x2F;very&#x2F;simple&#x2F;challenge&#39;).hexdigest() &#x3D;&#x3D; &#39;44e4403b63620a2075d3fb2e0a6207d2&#39;)</span><br><span class="line">print(&#39;sn:&#39;, sn.decode())</span><br></pre></td></tr></table></figure>
+
+<p>get sn:<strong>VXX/8AKlVXV8/wCpVXV9/DCogeWKJMtrmeY=</strong></p>
+<h3 id="杂杂碎："><a href="#杂杂碎：" class="headerlink" title="杂杂碎："></a>杂杂碎：</h3><p>其实原本的打算是将前面的一些算法也运用在check里面，但是如此将变成算法的堆叠，感觉没多大意思，还有一点就是本来是打算魔改下DES3的，但是由于时间的问题所以也未果了（其实还是太菜了），大佬们都tql，写了几个小时的题目，半天就被秒了！</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/CTF/" rel="tag"><i class="fa fa-tag"></i>CTF</a>
+          
+            <a href="/tags/Reverse/" rel="tag"><i class="fa fa-tag"></i>Reverse</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/09/10/2019GDQWB/" rel="next" title="2019GDQWB">
+                <i class="fa fa-chevron-left"></i> 2019GDQWB
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/11/12/2019RedHat/" rel="prev" title="2019RedHat部分Reverse writeup">
+                2019RedHat部分Reverse writeup <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/feng.jpg"
+                alt="feng" />
+            
+              <p class="site-author-name" itemprop="name">feng</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yifeng-lee" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:feng@m.scnu.edu.cn" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#设计思路"><span class="nav-number">1.</span> <span class="nav-text">设计思路:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解题思路："><span class="nav-number">2.</span> <span class="nav-text">解题思路：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#杂杂碎："><span class="nav-number">3.</span> <span class="nav-text">杂杂碎：</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright"><font color=black face=STLiti>Copyright &nbsp;</font><font color=black>&copy;</font> <font color=black face=STLiti><span itemprop="copyrightYear">2020</span></font>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder" style="font-family:STLiti;color:black;">feng . All Rights Reserved.</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+<script>
+    (function(){
+        if(''){
+            if (prompt('请输入密码') !== ''){
+                alert('密码错误');
+                history.back();
+            }
+        }
+    })();
+</script>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="CTF,Writeup,Reverse," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="RE Clever Bird100401D0E  |.  66:0F6E45 8C  movd mm0,[local.29]  get score 1234567891011121300401D13  |.  B9 D859375F   mov ecx,0x5F3759D800401D18  |.  0f5bc0        cvtdq2ps xmm0,xmm000401D1B  |.  F3:">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2019XNUCA Reverse 部分Writeup">
+<meta property="og:url" content="http://yoursite.com/2019/08/31/2019XNUCA/index.html">
+<meta property="og:site_name" content="feng&#39;s blog">
+<meta property="og:description" content="RE Clever Bird100401D0E  |.  66:0F6E45 8C  movd mm0,[local.29]  get score 1234567891011121300401D13  |.  B9 D859375F   mov ecx,0x5F3759D800401D18  |.  0f5bc0        cvtdq2ps xmm0,xmm000401D1B  |.  F3:">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2019-08-30T16:00:00.000Z">
+<meta property="article:modified_time" content="2020-02-18T05:30:54.345Z">
+<meta property="article:author" content="feng">
+<meta property="article:tag" content="CTF">
+<meta property="article:tag" content="Writeup">
+<meta property="article:tag" content="Reverse">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/08/31/2019XNUCA/"/>
+
+
+
+
+
+  <title>2019XNUCA Reverse 部分Writeup | feng's blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">feng's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/31/2019XNUCA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="feng">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/feng.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="feng's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">2019XNUCA Reverse 部分Writeup</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-08-31T00:00:00+08:00">
+                2019-08-31
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="RE-Clever-Bird"><a href="#RE-Clever-Bird" class="headerlink" title="RE Clever Bird"></a>RE Clever Bird</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">00401D0E  |.  66:0F6E45 8C  movd mm0,[local.29]</span><br></pre></td></tr></table></figure>
+
+<p>get score</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">00401D13  |.  B9 D859375F   mov ecx,0x5F3759D8</span><br><span class="line">00401D18  |.  0f5bc0        cvtdq2ps xmm0,xmm0</span><br><span class="line">00401D1B  |.  F3:0F1185 5CF&gt;movss [local.41],xmm0</span><br><span class="line">00401D23  |.  0F28C8        movaps xmm1,xmm0</span><br><span class="line">00401D26  |.  8B85 5CFFFFFF mov eax,[local.41]</span><br><span class="line">00401D2C  |.  F3:0F590D 884&gt;mulss xmm1,dword ptr ds:[0x404388]</span><br><span class="line">00401D34  |.  D1F8          sar eax,1</span><br><span class="line">00401D36  |.  2BC8          sub ecx,eax</span><br><span class="line">00401D38  |.  898D 5CFFFFFF mov [local.41],ecx</span><br><span class="line">00401D3E  |.  F3:0F114D C4  movss [local.15],xmm1</span><br><span class="line">00401D43  |.  74 09         je short Clever_B.00401D4E</span><br><span class="line">00401D45  |.  83C1 07       add ecx,0x7</span><br><span class="line">00401D48  |.  898D 5CFFFFFF mov [local.41],ecx</span><br></pre></td></tr></table></figure>
+
+<p>得到一个受score约束的值，公式如下，涉及单精度浮点数转换</p>
+<p>0x5F3759D8 - (score &gt;&gt; 1) + 7</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">00401D65  |&gt; \F3:0F108D 5CF&gt;movss xmm1,[local.41]</span><br><span class="line">00401D6D  |.  F3:0F1015 8C4&gt;movss xmm2,dword ptr ds:[0x40438C]</span><br><span class="line">00401D75  |.  0F28C1        movaps xmm0,xmm1</span><br><span class="line">00401D78  |.  F3:0F5945 C4  mulss xmm0,[local.15]</span><br><span class="line">00401D7D  |.  F3:0F59C1     mulss xmm0,xmm1</span><br><span class="line">00401D81  |.  F3:0F5CD0     subss xmm2,xmm0</span><br><span class="line">00401D85  |.  F3:0F59D1     mulss xmm2,xmm1</span><br><span class="line">00401D89  |.  F3:0F5915 984&gt;mulss xmm2,dword ptr ds:[0x404398]</span><br><span class="line">00401D91  |.  F3:0F5915 944&gt;mulss xmm2,dword ptr ds:[0x404394]</span><br><span class="line">00401D99  |.  F3:0F5815 904&gt;addss xmm2,dword ptr ds:[0x404390]</span><br><span class="line">00401DA1  |.  F3:0F5E15 944&gt;divss xmm2,dword ptr ds:[0x404394]</span><br><span class="line">00401DA9  |.  F3:0F2CFA     cvttss2si edi,xmm2</span><br></pre></td></tr></table></figure>
+
+<p>浮点数运算，其中两个变量分别是a=score/2以及前面得到的一个值b</p>
+<p>res = ((1.5<em>a-a</em>a<em>a</em>b)*1000000000+5)/10</p>
+<p>00401DCA |. 81FF AE360400 cmp edi,0x436AE</p>
+<p>check res == 0x436ae</p>
+<p>得到一条函数式 ((1.5<em>a-a</em>a<em>a</em>b)*1000000000+5)/10=0x436ae</p>
+<p>b受a约束，且函数应该单调递减，缩小区间后爆score</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">00401E40  |&gt; &#x2F;8BD6          &#x2F;mov edx,esi</span><br><span class="line">00401E42  |. |81E2 01000080 |and edx,0x80000001</span><br><span class="line">00401E48  |. |79 05         |jns short Clever_B.00401E4F</span><br><span class="line">00401E4A  |. |4A            |dec edx</span><br><span class="line">00401E4B  |. |83CA FE       |or edx,-0x2</span><br><span class="line">00401E4E  |. |42            |inc edx</span><br><span class="line">00401E4F  |&gt; |0FBE0F        |movsx ecx,byte ptr ds:[edi]</span><br><span class="line">00401E52  |. |83C2 30       |add edx,0x30</span><br><span class="line">00401E55  |. |47            |inc edi                                 ;  kernel32.GetStdHandle</span><br><span class="line">00401E56  |. |3BCA          |cmp ecx,edx</span><br><span class="line">00401E58  |. |75 6D         |jnz short Clever_B.00401EC7</span><br><span class="line">00401E5A  |. |8BC6          |mov eax,esi</span><br><span class="line">00401E5C  |. |99            |cdq</span><br><span class="line">00401E5D  |. |2BC2          |sub eax,edx</span><br><span class="line">00401E5F  |. |8BF0          |mov esi,eax</span><br><span class="line">00401E61  |. |D1FE          |sar esi,1</span><br><span class="line">00401E63  |.^\75 DB         \jnz short Clever_B.00401E40</span><br></pre></td></tr></table></figure>
+
+<p>以score的二进制串依次逆序与*key+4开始比对</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">00401E80  |&gt; &#x2F;0FBE5435 C8   &#x2F;movsx edx,byte ptr ss:[ebp+esi-0x38]</span><br><span class="line">00401E85  |. |8BC3          |mov eax,ebx</span><br><span class="line">00401E87  |. |D3F8          |sar eax,cl</span><br><span class="line">00401E89  |. |83EA 30       |sub edx,0x30</span><br><span class="line">00401E8C  |. |0FB6C0        |movzx eax,al</span><br><span class="line">00401E8F  |. |33D0          |xor edx,eax</span><br><span class="line">00401E91  |. |3954B5 B8     |cmp dword ptr ss:[ebp+esi*4-0x48],edx</span><br><span class="line">00401E95  |. |75 30         |jnz short Clever_B.00401EC7</span><br><span class="line">00401E97  |. |83C1 08       |add ecx,0x8</span><br><span class="line">00401E9A  |. |46            |inc esi</span><br><span class="line">00401E9B  |. |83F9 20       |cmp ecx,0x20</span><br><span class="line">00401E9E  |.^\7C E0         \jl short Clever_B.00401E80</span><br></pre></td></tr></table></figure>
+
+<p>比对key的前四位，这里是常量，前四位为B1RD</p>
+<p>即key为’B1RD’ + reversed(bin(score))</p>
+<p>求解代码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">import struct</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def fun(a, b):</span><br><span class="line">    res &#x3D; ((1.5*a-a*a*a*b)*1000000000+5)&#x2F;10</span><br><span class="line">    return int(res)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def float_to_bin(num):</span><br><span class="line">    bits, &#x3D; struct.unpack(&#39;!I&#39;, struct.pack(&#39;!f&#39;, num))</span><br><span class="line">    return bits</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def bin_to_float(num):</span><br><span class="line">    nums, &#x3D; struct.unpack(&#39;!f&#39;, struct.pack(&#39;!I&#39;, num))</span><br><span class="line">    return nums</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def run(score):</span><br><span class="line">    v1 &#x3D; float_to_bin(score)</span><br><span class="line">    v2 &#x3D; 0x5F3759D8 - (v1 &gt;&gt; 1) + 7</span><br><span class="line">    v3 &#x3D; bin_to_float(v2)</span><br><span class="line">    return fun(v3, score&#x2F;2.0)</span><br><span class="line"># print run(135000)</span><br><span class="line"># print run(130000)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def crack(a, b):</span><br><span class="line">    for i in range(a, b):</span><br><span class="line">        if run(i) &#x3D;&#x3D; 0x436ae:</span><br><span class="line">            return i</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">post &#x3D; crack(130000, 135000)</span><br><span class="line">post &#x3D; bin(post)[2:][::-1]</span><br><span class="line">print(post)</span><br><span class="line"></span><br><span class="line">a &#x3D; 0xA991E504</span><br><span class="line">b &#x3D; 0xbdb3e416</span><br><span class="line">pre &#x3D; hex((a ^ b)+0x30303030)[2:].decode(&#39;hex&#39;)[::-1]</span><br><span class="line">print(pre)</span><br><span class="line"></span><br><span class="line">print(&#39;flag&#123;%s&#125;&#39;%(pre+post))</span><br></pre></td></tr></table></figure>
+
+<p>get flag</p>
+<p><strong>flag{B1RD010000000000000001}</strong></p>
+<h2 id="ooollvm"><a href="#ooollvm" class="headerlink" title="ooollvm"></a>ooollvm</h2><p>ollvm混淆的题目，pintools大法可以跑出来，听说angr也可以</p>
+<p><a href="https://github.com/wagiro/pintool" target="_blank" rel="noopener">https://github.com/wagiro/pintool</a></p>
+<p>脚本好像有点小问题</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">password &#x3D; tempassword[:i-1] + &#39;\\&#39;+**char** + tempassword[i:]</span><br><span class="line">改成</span><br><span class="line">password &#x3D; initpass+&#39;\\&#39;+**char**+tempassword[i+1:]</span><br><span class="line">另外</span><br><span class="line">if passlen &gt; 64:</span><br><span class="line">改大点</span><br></pre></td></tr></table></figure>
+
+<p>log</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br></pre></td><td class="code"><pre><span class="line">➜  pintool-master python pintool.py -c 1,2,3 -b &#123;_&#125; -l 80 -a 64 -d &#39;&#x3D;&gt; &#39; -i &#39;flag&#123;&#39; -d &#39;&#x3D;&gt; 260&#39; -s - ooollvm</span><br><span class="line">flag&#123;t-------------------------------------------------------------------------- &#x3D; 184155 difference 286 instructions</span><br><span class="line">flag&#123;th------------------------------------------------------------------------- &#x3D; 184428 difference 273 instructions</span><br><span class="line">flag&#123;thi------------------------------------------------------------------------ &#x3D; 184727 difference 299 instructions</span><br><span class="line">flag&#123;thii----------------------------------------------------------------------- &#x3D; 185042 difference 315 instructions</span><br><span class="line">flag&#123;thiii---------------------------------------------------------------------- &#x3D; 185354 difference 312 instructions</span><br><span class="line">flag&#123;thiiii--------------------------------------------------------------------- &#x3D; 185666 difference 312 instructions</span><br><span class="line">flag&#123;thiiiis-------------------------------------------------------------------- &#x3D; 185978 difference 312 instructions</span><br><span class="line">flag&#123;thiiiis_------------------------------------------------------------------- &#x3D; 186290 difference 312 instructions</span><br><span class="line">flag&#123;thiiiis_a------------------------------------------------------------------ &#x3D; 186605 difference 315 instructions</span><br><span class="line">flag&#123;thiiiis_aa----------------------------------------------------------------- &#x3D; 186920 difference 315 instructions</span><br><span class="line">flag&#123;thiiiis_aaa---------------------------------------------------------------- &#x3D; 187238 difference 318 instructions</span><br><span class="line">flag&#123;thiiiis_aaaa--------------------------------------------------------------- &#x3D; 187558 difference 320 instructions</span><br><span class="line">flag&#123;thiiiis_aaaai-------------------------------------------------------------- &#x3D; 187876 difference 318 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaiv------------------------------------------------------------- &#x3D; 188164 difference 288 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive------------------------------------------------------------ &#x3D; 188466 difference 302 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_----------------------------------------------------------- &#x3D; 188784 difference 318 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_b---------------------------------------------------------- &#x3D; 189070 difference 286 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_bu--------------------------------------------------------- &#x3D; 189372 difference 302 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_but-------------------------------------------------------- &#x3D; 189658 difference 286 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_------------------------------------------------------- &#x3D; 189960 difference 302 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_h------------------------------------------------------ &#x3D; 190246 difference 286 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_ha----------------------------------------------------- &#x3D; 190545 difference 299 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_har---------------------------------------------------- &#x3D; 190831 difference 286 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard--------------------------------------------------- &#x3D; 191104 difference 273 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_-------------------------------------------------- &#x3D; 191406 difference 302 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_o------------------------------------------------- &#x3D; 191721 difference 315 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_ob------------------------------------------------ &#x3D; 192007 difference 286 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_obf----------------------------------------------- &#x3D; 192280 difference 273 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_obfu---------------------------------------------- &#x3D; 192579 difference 299 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_obfus--------------------------------------------- &#x3D; 192894 difference 315 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_obfusc-------------------------------------------- &#x3D; 193209 difference 315 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_obfusca------------------------------------------- &#x3D; 193524 difference 315 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_obfuscat------------------------------------------ &#x3D; 193810 difference 286 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_obfuscate----------------------------------------- &#x3D; 194112 difference 302 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_obfuscated---------------------------------------- &#x3D; 194398 difference 286 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_obfuscated_--------------------------------------- &#x3D; 194697 difference 299 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_obfuscated_p-------------------------------------- &#x3D; 194983 difference 286 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_obfuscated_pr------------------------------------- &#x3D; 195256 difference 273 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_obfuscated_pro------------------------------------ &#x3D; 195558 difference 302 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_obfuscated_prog----------------------------------- &#x3D; 195876 difference 318 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_obfuscated_progr---------------------------------- &#x3D; 196164 difference 288 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_obfuscated_progra--------------------------------- &#x3D; 196463 difference 299 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_obfuscated_program-------------------------------- &#x3D; 196758 difference 295 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_obfuscated_program&#125;------------------------------- &#x3D; 196758 difference 0 instructionsns</span><br><span class="line"></span><br><span class="line">Password not found, try to change charset...</span><br><span class="line"></span><br><span class="line">➜  pintool-master </span><br><span class="line">➜  pintool-master python pintool.py -c 1,2,3 -b &#123;_&#125; -l 80 -a 64 -d &#39;&#x3D;&gt; &#39; -i &#39;flag&#123;thiiiis_aaaaive_but_hard_obfuscated_program&#39; -d &#39;&#x3D;&gt; 200&#39; -s - ooollvm</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_obfuscated_program_------------------------------- &#x3D; 196987 difference 229 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_obfuscated_program_&#125;------------------------------ &#x3D; 196987 difference 0 instructionsss</span><br><span class="line"></span><br><span class="line">Password not found, try to change charset...</span><br><span class="line"></span><br><span class="line">➜  pintool-master python pintool.py -c 1,2,3 -b &#123;_&#125; -l 80 -a 64 -d &#39;&#x3D;&gt; &#39; -i &#39;flag&#123;thiiiis_aaaaive_but_hard_obfuscated_program_&#39; -d &#39;&#x3D;&gt; 160&#39; -s - ooollvm</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_obfuscated_program_&#125;------------------------------ &#x3D; 196987 difference 0 instructionsss</span><br><span class="line"></span><br><span class="line">Password not found, try to change charset...</span><br><span class="line"></span><br><span class="line">➜  pintool-master python pintool.py -c 1,2,3 -b &#123;_&#125; -l 80 -a 64 -d &#39;&#x3D;&gt; &#39; -i &#39;flag&#123;thiiiis_aaaaive_but_hard_obfuscated_program_&#39; -d &#39;&#x3D;&gt; 140&#39; -s - ooollvm</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_obfuscated_program_c------------------------------ &#x3D; 197140 difference 153 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_obfuscated_program_co----------------------------- &#x3D; 197293 difference 153 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_obfuscated_program_com---------------------------- &#x3D; 197446 difference 153 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_obfuscated_program_comp--------------------------- &#x3D; 197591 difference 145 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_obfuscated_program_compi-------------------------- &#x3D; 197740 difference 149 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_obfuscated_program_compil------------------------- &#x3D; 197885 difference 145 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_obfuscated_program_compile------------------------ &#x3D; 198034 difference 149 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_obfuscated_program_compiled----------------------- &#x3D; 198179 difference 145 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_obfuscated_program_compiled_---------------------- &#x3D; 198328 difference 149 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_obfuscated_program_compiled_b--------------------- &#x3D; 198473 difference 145 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_obfuscated_program_compiled_by-------------------- &#x3D; 198622 difference 149 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_obfuscated_program_compiled_by_------------------- &#x3D; 198775 difference 153 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_obfuscated_program_compiled_by_l------------------ &#x3D; 198920 difference 145 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_obfuscated_program_compiled_by_ll----------------- &#x3D; 199061 difference 141 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_obfuscated_program_compiled_by_llv---------------- &#x3D; 199202 difference 141 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_obfuscated_program_compiled_by_llvm--------------- &#x3D; 199351 difference 149 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_obfuscated_program_compiled_by_llvm_-------------- &#x3D; 199502 difference 151 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_obfuscated_program_compiled_by_llvm_p------------- &#x3D; 199649 difference 145 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_obfuscated_program_compiled_by_llvm_pa------------ &#x3D; 199798 difference 149 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_obfuscated_program_compiled_by_llvm_pas----------- &#x3D; 199951 difference 153 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_obfuscated_program_compiled_by_llvm_pas&#125;---------- &#x3D; 199951 difference 0 instructionss</span><br><span class="line"></span><br><span class="line">Password not found, try to change charset...</span><br><span class="line"></span><br><span class="line">➜  pintool-master python pintool.py -c 1,2,3 -b &#123;_&#125; -l 80 -a 64 -d &#39;&#x3D;&gt; &#39; -i &#39;flag&#123;thiiiis_aaaaive_but_hard_obfuscated_program_compiled_by_llvm_pas&#39; -d &#39;&#x3D;&gt; 100&#39; -s - ooollvm</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_obfuscated_program_compiled_by_llvm_pas&#125;---------- &#x3D; 199951 difference 0 instructionss</span><br><span class="line"></span><br><span class="line">Password not found, try to change charset...</span><br><span class="line"></span><br><span class="line">➜  pintool-master python pintool.py -c 1,2,3 -b &#123;_&#125; -l 80 -a 64 -d &#39;&#x3D;&gt; &#39; -i &#39;flag&#123;thiiiis_aaaaive_but_hard_obfuscated_program_compiled_by_llvm_pas&#39; -d &#39;&#x3D;&gt; 60&#39; -s - ooollvm</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_obfuscated_program_compiled_by_llvm_pasa---------- &#x3D; 200020 difference 69 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_obfuscated_program_compiled_by_llvm_pasas--------- &#x3D; 200104 difference 84 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_obfuscated_program_compiled_by_llvm_pasas&#125;-------- &#x3D; 200104 difference 0 instructionss</span><br><span class="line"></span><br><span class="line">Password not found, try to change charset...</span><br><span class="line"></span><br><span class="line">➜  pintool-master python pintool.py -c 1,2,3 -b &#123;_&#125; -l 80 -a 64 -d &#39;&#x3D;&gt; &#39; -i &#39;flag&#123;thiiiis_aaaaive_but_hard_obfuscated_program_compiled_by_llvm_pass&#39; -d &#39;&#x3D;&gt; 60&#39; -s - ooollvm</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_obfuscated_program_compiled_by_llvm_passs--------- &#x3D; 200089 difference 69 instructions</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_obfuscated_program_compiled_by_llvm_passs&#125;-------- &#x3D; 200089 difference 0 instructionss</span><br><span class="line"></span><br><span class="line">Password not found, try to change charset...</span><br><span class="line"></span><br><span class="line">➜  pintool-master python pintool.py -c 1,2,3 -b &#123;_&#125; -l 80 -a 64 -d &#39;&#x3D;&gt; &#39; -i &#39;flag&#123;thiiiis_aaaaive_but_hard_obfuscated_program_compiled_by_llvm_pass&#39; -d &#39;&#x3D;&gt; 100&#39; -s - ooollvm</span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_obfuscated_program_compiled_by_llvm_pass&#125;--------- &#x3D; 200089 difference 69 instructions</span><br><span class="line"></span><br><span class="line">Password not found, try to change charset...</span><br><span class="line"></span><br><span class="line">➜  pintool-master .&#x2F;ooollvm </span><br><span class="line">flag&#123;thiiiis_aaaaive_but_hard_obfuscated_program_compiled_by_llvm_pass&#125;</span><br><span class="line">Success!</span><br><span class="line">➜  pintool-master</span><br></pre></td></tr></table></figure>
+
+<p>get flag</p>
+<p><strong>flag{thiiiis_aaaaive_but_hard_obfuscated_program_compiled_by_llvm_pass}</strong></p>
+<p>题目多解，提交</p>
+<p><strong>flag{this_is_a_naive_but_hard_obfuscated_program_compiled_by_llvm_pass}</strong></p>
+<p>才判对    </p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/CTF/" rel="tag"><i class="fa fa-tag"></i>CTF</a>
+          
+            <a href="/tags/Writeup/" rel="tag"><i class="fa fa-tag"></i>Writeup</a>
+          
+            <a href="/tags/Reverse/" rel="tag"><i class="fa fa-tag"></i>Reverse</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/08/30/TEA/" rel="next" title="微型加密算法及其逆向分析">
+                <i class="fa fa-chevron-left"></i> 微型加密算法及其逆向分析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/09/03/RSA-Attack/" rel="prev" title="CTF中RSA的一些攻击思路">
+                CTF中RSA的一些攻击思路 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/feng.jpg"
+                alt="feng" />
+            
+              <p class="site-author-name" itemprop="name">feng</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yifeng-lee" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:feng@m.scnu.edu.cn" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#RE-Clever-Bird"><span class="nav-number">1.</span> <span class="nav-text">RE Clever Bird</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ooollvm"><span class="nav-number">2.</span> <span class="nav-text">ooollvm</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright"><font color=black face=STLiti>Copyright &nbsp;</font><font color=black>&copy;</font> <font color=black face=STLiti><span itemprop="copyrightYear">2020</span></font>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder" style="font-family:STLiti;color:black;">feng . All Rights Reserved.</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

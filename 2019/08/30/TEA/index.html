@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+<script>
+    (function(){
+        if(''){
+            if (prompt('请输入密码') !== ''){
+                alert('密码错误');
+                history.back();
+            }
+        }
+    })();
+</script>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Crypto,TEA," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="关于TEA系列算法 微型加密算法（Tiny Encryption Algorithm，TEA）是一种易于描述和执行的块密码，通常只需要很少的代码就可实现。其设计者是David Wheeler、Roger Needham TEA的分组长度为64位，密钥长度为128位，采用Feistel网络，建议32次循环加密即64轮 XTEA是TEA的扩展，同样是一个64位块的Feistel密码，使用128位密钥，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="微型加密算法及其逆向分析">
+<meta property="og:url" content="http://yoursite.com/2019/08/30/TEA/index.html">
+<meta property="og:site_name" content="feng&#39;s blog">
+<meta property="og:description" content="关于TEA系列算法 微型加密算法（Tiny Encryption Algorithm，TEA）是一种易于描述和执行的块密码，通常只需要很少的代码就可实现。其设计者是David Wheeler、Roger Needham TEA的分组长度为64位，密钥长度为128位，采用Feistel网络，建议32次循环加密即64轮 XTEA是TEA的扩展，同样是一个64位块的Feistel密码，使用128位密钥，">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://scontent-sjc3-1.xx.fbcdn.net/v/t1.15752-9/53034419_2177913325858403_2720357041754341376_n.png?_nc_cat=101&_nc_oc=AQknst4J2qAag349d3W3NGYUNw9spPytfakOaAT40W_aauZkFcsegCSoQEm4c74GWcE&_nc_ht=scontent-sjc3-1.xx&oh=0ef9f806969ee3da7fd0450c1f7e4281&oe=5DCAA92E">
+<meta property="og:image" content="https://scontent-sjc3-1.xx.fbcdn.net/v/t1.15752-9/69984474_511987216228135_6021981977958154240_n.png?_nc_cat=106&_nc_oc=AQnVm-u3iDkpcDLIxfPuxgFqN4KiAnBXB7GgFmw4rvjxVWlHY2KiSQCYsLcXc7AKsr0&_nc_ht=scontent-sjc3-1.xx&oh=fdfc05891c7e09ea93c8a10c6dcbe8ed&oe=5E02B7F7">
+<meta property="og:image" content="https://scontent-sjc3-1.xx.fbcdn.net/v/t1.15752-9/69460376_728431394256854_8089696744557772800_n.png?_nc_cat=106&_nc_oc=AQmySgEpT0Ss41gHrhxj_tSOqiw2h5Gk5OePQozqUP_88CjX36Z1AuvXrswsGZG95-c&_nc_ht=scontent-sjc3-1.xx&oh=26f4a85bbd551356437d596ca1865b6e&oe=5E070927">
+<meta property="article:published_time" content="2019-08-29T16:00:00.000Z">
+<meta property="article:modified_time" content="2020-02-18T07:17:09.506Z">
+<meta property="article:author" content="feng">
+<meta property="article:tag" content="Crypto">
+<meta property="article:tag" content="TEA">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://scontent-sjc3-1.xx.fbcdn.net/v/t1.15752-9/53034419_2177913325858403_2720357041754341376_n.png?_nc_cat=101&_nc_oc=AQknst4J2qAag349d3W3NGYUNw9spPytfakOaAT40W_aauZkFcsegCSoQEm4c74GWcE&_nc_ht=scontent-sjc3-1.xx&oh=0ef9f806969ee3da7fd0450c1f7e4281&oe=5DCAA92E">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/08/30/TEA/"/>
+
+
+
+
+
+  <title>微型加密算法及其逆向分析 | feng's blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">feng's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/30/TEA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="feng">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/feng.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="feng's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">微型加密算法及其逆向分析</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-08-30T00:00:00+08:00">
+                2019-08-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="关于TEA系列算法"><a href="#关于TEA系列算法" class="headerlink" title="关于TEA系列算法"></a>关于TEA系列算法</h2><blockquote>
+<p><strong>微型加密算法</strong>（Tiny Encryption Algorithm，TEA）是一种易于描述和执行的块密码，通常只需要很少的代码就可实现。其设计者是David Wheeler、Roger Needham</p>
+<p>TEA的分组长度为64位，密钥长度为128位，采用Feistel网络，建议32次循环加密即64轮</p>
+<p>XTEA是TEA的扩展，同样是一个64位块的Feistel密码，使用128位密钥，建议64轮</p>
+<p>XXTEA是一个非平衡Feistel网络分组密码，在可变长度块上运行，这些块是32位大小的任意倍数（最小64位），使用128位密钥</p>
+<p>TEA系列算法典型特征是采用密钥调度常数<strong>0x9e3779b9</strong></p>
+</blockquote>
+<h2 id="加解密实现"><a href="#加解密实现" class="headerlink" title="加解密实现"></a>加解密实现</h2><h3 id="TEA加解密实现"><a href="#TEA加解密实现" class="headerlink" title="TEA加解密实现"></a>TEA加解密实现</h3><p><a href="https://scontent-sjc3-1.xx.fbcdn.net/v/t1.15752-9/53034419_2177913325858403_2720357041754341376_n.png?_nc_cat=101&_nc_oc=AQknst4J2qAag349d3W3NGYUNw9spPytfakOaAT40W_aauZkFcsegCSoQEm4c74GWcE&_nc_ht=scontent-sjc3-1.xx&oh=0ef9f806969ee3da7fd0450c1f7e4281&oe=5DCAA92E" target="_blank" rel="noopener"><img src="https://scontent-sjc3-1.xx.fbcdn.net/v/t1.15752-9/53034419_2177913325858403_2720357041754341376_n.png?_nc_cat=101&_nc_oc=AQknst4J2qAag349d3W3NGYUNw9spPytfakOaAT40W_aauZkFcsegCSoQEm4c74GWcE&_nc_ht=scontent-sjc3-1.xx&oh=0ef9f806969ee3da7fd0450c1f7e4281&oe=5DCAA92E" alt="img"></a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">void encrypt(unsigned int* v, unsigned int* key) &#123;</span><br><span class="line">  unsigned int l &#x3D; v[0], r &#x3D; v[1], sum &#x3D; 0, delta &#x3D; 0x9e3779b9;</span><br><span class="line">  for (size_t i &#x3D; 0; i &lt; 32; i++) &#123;</span><br><span class="line">    sum +&#x3D; delta;</span><br><span class="line">    l +&#x3D; ((r &lt;&lt; 4) + key[0]) ^ (r + sum) ^ ((r &gt;&gt; 5) + key[1]);</span><br><span class="line">    r +&#x3D; ((l &lt;&lt; 4) + key[2]) ^ (l + sum) ^ ((l &gt;&gt; 5) + key[3]);</span><br><span class="line">  &#125;</span><br><span class="line">  v[0] &#x3D; l;</span><br><span class="line">  v[1] &#x3D; r;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void decrypt(unsigned int* v, unsigned int* key) &#123;</span><br><span class="line">  unsigned int l &#x3D; v[0], r &#x3D; v[1], sum &#x3D; 0, delta &#x3D; 0x9e3779b9;</span><br><span class="line">  sum &#x3D; delta *32;</span><br><span class="line">  for (size_t i &#x3D; 0; i &lt; 32; i++) &#123;</span><br><span class="line">    r -&#x3D; ((l &lt;&lt; 4) + key[2]) ^ (l + sum) ^ ((l &gt;&gt; 5) + key[3]);</span><br><span class="line">    l -&#x3D; ((r &lt;&lt; 4) + key[0]) ^ (r + sum) ^ ((r &gt;&gt; 5) + key[1]);</span><br><span class="line">    sum -&#x3D; delta;</span><br><span class="line">  &#125;</span><br><span class="line">  v[0] &#x3D; l;</span><br><span class="line">  v[1] &#x3D; r;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main(int argc, char const *argv[])</span><br><span class="line">&#123;</span><br><span class="line">    &#x2F;&#x2F;test</span><br><span class="line">    unsigned int v[2]&#x3D;&#123;1,2&#125;,key[4]&#x3D;&#123;1,2,3,4&#125;;</span><br><span class="line">    printf(&quot;%u,%u\n&quot;,v[0],v[1]);</span><br><span class="line">    encrypt(v,key);</span><br><span class="line">    printf(&quot;%u,%u\n&quot;,v[0],v[1]);</span><br><span class="line">    decrypt(v,key);</span><br><span class="line">    printf(&quot;%u,%u\n&quot;,v[0],v[1]);</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="XTEA加解密实现"><a href="#XTEA加解密实现" class="headerlink" title="XTEA加解密实现"></a>XTEA加解密实现</h3><p><a href="https://scontent-sjc3-1.xx.fbcdn.net/v/t1.15752-9/69984474_511987216228135_6021981977958154240_n.png?_nc_cat=106&_nc_oc=AQnVm-u3iDkpcDLIxfPuxgFqN4KiAnBXB7GgFmw4rvjxVWlHY2KiSQCYsLcXc7AKsr0&_nc_ht=scontent-sjc3-1.xx&oh=fdfc05891c7e09ea93c8a10c6dcbe8ed&oe=5E02B7F7" target="_blank" rel="noopener"><img src="https://scontent-sjc3-1.xx.fbcdn.net/v/t1.15752-9/69984474_511987216228135_6021981977958154240_n.png?_nc_cat=106&_nc_oc=AQnVm-u3iDkpcDLIxfPuxgFqN4KiAnBXB7GgFmw4rvjxVWlHY2KiSQCYsLcXc7AKsr0&_nc_ht=scontent-sjc3-1.xx&oh=fdfc05891c7e09ea93c8a10c6dcbe8ed&oe=5E02B7F7" alt="img"></a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">void encrypt(unsigned int* v, unsigned int* key) &#123;</span><br><span class="line">  unsigned int l &#x3D; v[0], r &#x3D; v[1], sum &#x3D; 0, delta &#x3D; 0x9e3779b9;</span><br><span class="line">  for (size_t i &#x3D; 0; i &lt; 32; i++) &#123;</span><br><span class="line">    l +&#x3D; (((r &lt;&lt; 4) ^ (r &gt;&gt; 5)) + r) ^ (sum + key[sum &amp; 3]);</span><br><span class="line">    sum +&#x3D; delta;</span><br><span class="line">    r +&#x3D; (((l &lt;&lt; 4) ^ (l &gt;&gt; 5)) + l) ^ (sum + key[(sum &gt;&gt; 11) &amp; 3]);</span><br><span class="line">  &#125;</span><br><span class="line">  v[0] &#x3D; l;</span><br><span class="line">  v[1] &#x3D; r;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void decrypt(unsigned int* v, unsigned int* key) &#123;</span><br><span class="line">  unsigned int l &#x3D; v[0], r &#x3D; v[1], sum &#x3D; 0, delta &#x3D; 0x9e3779b9;</span><br><span class="line">  sum &#x3D; delta * 32;</span><br><span class="line">  for (size_t i &#x3D; 0; i &lt; 32; i++) &#123;</span><br><span class="line">    r -&#x3D; (((l &lt;&lt; 4) ^ (l &gt;&gt; 5)) + l) ^ (sum + key[(sum &gt;&gt; 11) &amp; 3]);</span><br><span class="line">    sum -&#x3D; delta;</span><br><span class="line">    l -&#x3D; (((r &lt;&lt; 4) ^ (r &gt;&gt; 5)) + r) ^ (sum + key[sum &amp; 3]);</span><br><span class="line">  &#125;</span><br><span class="line">  v[0] &#x3D; l;</span><br><span class="line">  v[1] &#x3D; r;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main(int argc, char const *argv[])</span><br><span class="line">&#123;</span><br><span class="line">    &#x2F;&#x2F;test</span><br><span class="line">    unsigned int v[2]&#x3D;&#123;1,2&#125;,key[4]&#x3D;&#123;1,2,3,4&#125;;</span><br><span class="line">    printf(&quot;%u,%u\n&quot;,v[0],v[1]);</span><br><span class="line">    encrypt(v,key);</span><br><span class="line">    printf(&quot;%u,%u\n&quot;,v[0],v[1]);</span><br><span class="line">    decrypt(v,key);</span><br><span class="line">    printf(&quot;%u,%u\n&quot;,v[0],v[1]);</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="XXTEA加解密实现"><a href="#XXTEA加解密实现" class="headerlink" title="XXTEA加解密实现"></a>XXTEA加解密实现</h3><p><a href="https://scontent-sjc3-1.xx.fbcdn.net/v/t1.15752-9/69460376_728431394256854_8089696744557772800_n.png?_nc_cat=106&_nc_oc=AQmySgEpT0Ss41gHrhxj_tSOqiw2h5Gk5OePQozqUP_88CjX36Z1AuvXrswsGZG95-c&_nc_ht=scontent-sjc3-1.xx&oh=26f4a85bbd551356437d596ca1865b6e&oe=5E070927" target="_blank" rel="noopener"><img src="https://scontent-sjc3-1.xx.fbcdn.net/v/t1.15752-9/69460376_728431394256854_8089696744557772800_n.png?_nc_cat=106&_nc_oc=AQmySgEpT0Ss41gHrhxj_tSOqiw2h5Gk5OePQozqUP_88CjX36Z1AuvXrswsGZG95-c&_nc_ht=scontent-sjc3-1.xx&oh=26f4a85bbd551356437d596ca1865b6e&oe=5E070927" alt="img"></a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdbool.h&gt;</span><br><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#define MX \</span><br><span class="line">  ((z &gt;&gt; 5 ^ y &lt;&lt; 2) + (y &gt;&gt; 3 ^ z &lt;&lt; 4) ^ (sum ^ y) + (k[p &amp; 3 ^ e] ^ z))</span><br><span class="line">bool btea(unsigned int* v, int n, unsigned int* k) &#123;</span><br><span class="line">  unsigned int z &#x3D; v[n - 1], y &#x3D; v[0], sum &#x3D; 0, e, DELTA &#x3D; 0x9e3779b9;</span><br><span class="line">  unsigned int p, q;</span><br><span class="line">  if (n &gt; 1) &#123; &#x2F;* Coding Part *&#x2F;</span><br><span class="line">    q &#x3D; 6 + 52 &#x2F; n;</span><br><span class="line">    while (q-- &gt; 0) &#123;</span><br><span class="line">      sum +&#x3D; DELTA;</span><br><span class="line">      e &#x3D; (sum &gt;&gt; 2) &amp; 3;</span><br><span class="line">      for (p &#x3D; 0; p &lt; n - 1; p++)</span><br><span class="line">        y &#x3D; v[p + 1], z &#x3D; v[p] +&#x3D; MX;</span><br><span class="line">      y &#x3D; v[0];</span><br><span class="line">      z &#x3D; v[n - 1] +&#x3D; MX;</span><br><span class="line">    &#125;</span><br><span class="line">    return 0;</span><br><span class="line">  &#125; else if (n &lt; -1) &#123; &#x2F;* Decoding Part *&#x2F;</span><br><span class="line">    n &#x3D; -n;</span><br><span class="line">    q &#x3D; 6 + 52 &#x2F; n;</span><br><span class="line">    sum &#x3D; q * DELTA;</span><br><span class="line">    while (sum !&#x3D; 0) &#123;</span><br><span class="line">      e &#x3D; (sum &gt;&gt; 2) &amp; 3;</span><br><span class="line">      for (p &#x3D; n - 1; p &gt; 0; p--)</span><br><span class="line">        z &#x3D; v[p - 1], y &#x3D; v[p] -&#x3D; MX;</span><br><span class="line">      z &#x3D; v[n - 1];</span><br><span class="line">      y &#x3D; v[0] -&#x3D; MX;</span><br><span class="line">      sum -&#x3D; DELTA;</span><br><span class="line">    &#125;</span><br><span class="line">    return 0;</span><br><span class="line">  &#125;</span><br><span class="line">  return 1;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main(int argc, char const* argv[]) &#123;</span><br><span class="line">  &#x2F;&#x2F; test</span><br><span class="line">  unsigned int v[2] &#x3D; &#123;1, 2&#125;, key[4] &#x3D; &#123;1, 2, 3, 4&#125;;</span><br><span class="line">  printf(&quot;%u,%u\n&quot;, v[0], v[1]);</span><br><span class="line">  btea(v, 2, key);</span><br><span class="line">  printf(&quot;%u,%u\n&quot;, v[0], v[1]);</span><br><span class="line">  btea(v, -2, key);</span><br><span class="line">  printf(&quot;%u,%u\n&quot;, v[0], v[1]);</span><br><span class="line">  return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="XXTEA逆向分析"><a href="#XXTEA逆向分析" class="headerlink" title="XXTEA逆向分析"></a>XXTEA逆向分析</h2><blockquote>
+<p>文件来源：2019RCTF babyre</p>
+</blockquote>
+<p>该题大致为输入一个16位字符串经过多次变换最终输出<strong>Bingo!</strong> 即可，由于题目的原因出现多解，故还需满足<strong>md5(rctf{flag})==5f8243a662cf71bf31d2b2602638dc1d</strong>，此处不作解释，由于主要是讲解XXTEA的逆向分析，其他过程暂且不细说，我们看到其中最关键的加密函数<strong>sub_55A0DF892CE0</strong>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br></pre></td><td class="code"><pre><span class="line">signed __int64 __fastcall sub_55A0DF892CE0(int *a1, signed int a2, __int64 a3)</span><br><span class="line">&#123;</span><br><span class="line">  v3 &#x3D; a3;</span><br><span class="line">  v4 &#x3D; a2;</span><br><span class="line">  v5 &#x3D; *a1;</span><br><span class="line">  v43 &#x3D; a2;</span><br><span class="line">  if ( a2 &gt; 1 )</span><br><span class="line">  &#123;</span><br><span class="line">    v6 &#x3D; a2 - 1;</span><br><span class="line">    v7 &#x3D; &amp;a1[a2 - 1];</span><br><span class="line">    v8 &#x3D; 0;</span><br><span class="line">    v9 &#x3D; *v7;</span><br><span class="line">    v10 &#x3D; ((a2 - 4) &amp; 0xFFFFFFFE) + 2;</span><br><span class="line">    v45 &#x3D; 0x9E3779B9 * (52 &#x2F; a2) - 0x4AB325AA;</span><br><span class="line">    do</span><br><span class="line">    &#123;</span><br><span class="line">      v8 -&#x3D; 0x61C88647;</span><br><span class="line">      v11 &#x3D; v8 &gt;&gt; 2;</span><br><span class="line">      if ( v43 &lt;&#x3D; 3 )</span><br><span class="line">      &#123;</span><br><span class="line">        v14 &#x3D; 0;</span><br><span class="line">      &#125;</span><br><span class="line">      else</span><br><span class="line">      &#123;</span><br><span class="line">        v12 &#x3D; *a1;</span><br><span class="line">        v13 &#x3D; a1;</span><br><span class="line">        v14 &#x3D; 0;</span><br><span class="line">        do</span><br><span class="line">        &#123;</span><br><span class="line">          v15 &#x3D; v13[1];</span><br><span class="line">          v13 +&#x3D; 2;</span><br><span class="line">          v16 &#x3D; (v9 ^ *(_DWORD *)(v3 + 4LL * (((unsigned __int8)v14 ^ (unsigned __int8)v11) &amp; 3))) + (v15 ^ v8);</span><br><span class="line">          v17 &#x3D; v14 + 1;</span><br><span class="line">          v14 +&#x3D; 2;</span><br><span class="line">          v18 &#x3D; v12 + ((((v9 &gt;&gt; 5) ^ 4 * v15) + ((v15 &gt;&gt; 3) ^ 16 * v9)) ^ v16);</span><br><span class="line">          v12 &#x3D; *v13;</span><br><span class="line">          *(v13 - 2) &#x3D; v18;</span><br><span class="line">          v9 &#x3D; v15</span><br><span class="line">             + (((4 * v12 ^ (v18 &gt;&gt; 5)) + (16 * v18 ^ (v12 &gt;&gt; 3))) ^ ((v12 ^ v8)</span><br><span class="line">                                                                    + (v18 ^ *(_DWORD *)(v3</span><br><span class="line">                                                                                       + 4LL</span><br><span class="line">                                                                                       * (((unsigned __int8)v11 ^ v17) &amp; 3)))));</span><br><span class="line">          *(v13 - 1) &#x3D; v9;</span><br><span class="line">        &#125;</span><br><span class="line">        while ( v10 !&#x3D; v14 );</span><br><span class="line">      &#125;</span><br><span class="line">      v19 &#x3D; &amp;a1[v14];</span><br><span class="line">      do</span><br><span class="line">      &#123;</span><br><span class="line">        v20 &#x3D; v19[1];</span><br><span class="line">        v21 &#x3D; v11 ^ v14++;</span><br><span class="line">        ++v19;</span><br><span class="line">        v22 &#x3D; *(v19 - 1)</span><br><span class="line">            + (((v9 ^ *(_DWORD *)(v3 + 4LL * (v21 &amp; 3))) + (v20 ^ v8)) ^ ((16 * v9 ^ (v20 &gt;&gt; 3)) + ((v9 &gt;&gt; 5) ^ 4 * v20)));</span><br><span class="line">        *(v19 - 1) &#x3D; v22;</span><br><span class="line">        v9 &#x3D; v22;</span><br><span class="line">      &#125;</span><br><span class="line">      while ( v6 &gt; v14 );</span><br><span class="line">      v9 &#x3D; *v7</span><br><span class="line">         + (((v22 ^ *(_DWORD *)(v3 + 4LL * (((unsigned __int8)v6 ^ (unsigned __int8)v11) &amp; 3))) + (*a1 ^ v8)) ^ ((4 * *a1 ^ (v22 &gt;&gt; 5)) + (16 * v22 ^ ((unsigned int)*a1 &gt;&gt; 3))));</span><br><span class="line">      *v7 &#x3D; v9;</span><br><span class="line">    &#125;</span><br><span class="line">    while ( v8 !&#x3D; v45 );</span><br><span class="line">    return 0LL;</span><br><span class="line">  &#125;</span><br><span class="line">  result &#x3D; 1LL;</span><br><span class="line">  if ( a2 &lt; -1 )</span><br><span class="line">  &#123;</span><br><span class="line">    v24 &#x3D; -a2;</span><br><span class="line">    v25 &#x3D; 0x9E3779B9 * (52 &#x2F; v24 + 6);</span><br><span class="line">    if ( v25 )</span><br><span class="line">    &#123;</span><br><span class="line">      v26 &#x3D; &amp;a1[v24 - 1];</span><br><span class="line">      v27 &#x3D; ~v4;</span><br><span class="line">      v44 &#x3D; &amp;a1[~v4];</span><br><span class="line">      v28 &#x3D; ~v4 - 2 - ((~v4 - 3) &amp; 0xFFFFFFFE);</span><br><span class="line">      do</span><br><span class="line">      &#123;</span><br><span class="line">        v29 &#x3D; v25 &gt;&gt; 2;</span><br><span class="line">        if ( v27 &lt;&#x3D; 2 )</span><br><span class="line">        &#123;</span><br><span class="line">          v31 &#x3D; v27;</span><br><span class="line">        &#125;</span><br><span class="line">        else</span><br><span class="line">        &#123;</span><br><span class="line">          v30 &#x3D; v44;</span><br><span class="line">          v31 &#x3D; v27;</span><br><span class="line">          v32 &#x3D; *v44;</span><br><span class="line">          do</span><br><span class="line">          &#123;</span><br><span class="line">            v33 &#x3D; *(v30 - 1);</span><br><span class="line">            v30 -&#x3D; 2;</span><br><span class="line">            v34 &#x3D; v32;</span><br><span class="line">            v32 &#x3D; *v30;</span><br><span class="line">            v35 &#x3D; ((v5 ^ v25) + (v33 ^ *(_DWORD *)(v3 + 4LL * (((unsigned __int8)v31 ^ (unsigned __int8)v29) &amp; 3)))) ^ ((4 * v5 ^ (v33 &gt;&gt; 5)) + ((v5 &gt;&gt; 3) ^ 16 * v33));</span><br><span class="line">            v36 &#x3D; v31 - 1;</span><br><span class="line">            v31 -&#x3D; 2;</span><br><span class="line">            v37 &#x3D; v34 - v35;</span><br><span class="line">            v38 &#x3D; *v30;</span><br><span class="line">            v30[2] &#x3D; v37;</span><br><span class="line">            v5 &#x3D; v33</span><br><span class="line">               - (((16 * v38 ^ (v37 &gt;&gt; 3)) + ((v32 &gt;&gt; 5) ^ 4 * v37)) ^ ((v32 ^ *(_DWORD *)(v3</span><br><span class="line">                                                                                         + 4LL</span><br><span class="line">                                                                                         * (((unsigned __int8)v29 ^ v36) &amp; 3)))</span><br><span class="line">                                                                      + (v25 ^ v37)));</span><br><span class="line">            v30[1] &#x3D; v5;</span><br><span class="line">          &#125;</span><br><span class="line">          while ( v28 !&#x3D; v31 );</span><br><span class="line">        &#125;</span><br><span class="line">        v39 &#x3D; &amp;a1[v31];</span><br><span class="line">        do</span><br><span class="line">        &#123;</span><br><span class="line">          v40 &#x3D; *(v39 - 1);</span><br><span class="line">          --v39;</span><br><span class="line">          v5 &#x3D; v39[1]</span><br><span class="line">             - (((v5 ^ v25) + (v40 ^ *(_DWORD *)(v3 + 4LL * (((unsigned __int8)v29 ^ (unsigned __int8)v31) &amp; 3)))) ^ (((v5 &gt;&gt; 3) ^ 16 * v40) + ((v40 &gt;&gt; 5) ^ 4 * v5)));</span><br><span class="line">          v39[1] &#x3D; v5;</span><br><span class="line">          --v31;</span><br><span class="line">        &#125;</span><br><span class="line">        while ( v31 );</span><br><span class="line">        v41 &#x3D; *a1</span><br><span class="line">            - (((((unsigned int)*v26 &gt;&gt; 5) ^ 4 * v5) + (16 * *v26 ^ (v5 &gt;&gt; 3))) ^ ((*(_DWORD *)(v3 + 4LL * (v29 &amp; 3)) ^ *v26)</span><br><span class="line">                                                                                 + (v25 ^ v5)));</span><br><span class="line">        v42 &#x3D; v25 &#x3D;&#x3D; 0x9E3779B9;</span><br><span class="line">        v25 +&#x3D; 0x61C88647;</span><br><span class="line">        v5 &#x3D; v41;</span><br><span class="line">        *a1 &#x3D; v41;</span><br><span class="line">      &#125;</span><br><span class="line">      while ( !v42 );</span><br><span class="line">    &#125;</span><br><span class="line">    return 0LL;</span><br><span class="line">  &#125;</span><br><span class="line">  return result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们可以看到反编译的伪代码也是十分清晰的，纵观整个函数，整个函数过程都围绕着<strong>0x9E3779B9</strong>这个魔数，相信很多人都有似曾相识的感觉，没错！该函数与上文的<strong>XXTEA加解密实现</strong>结构基本相同，实现了<strong>XXTEA</strong>加解密。接下来我们看到函数的调用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sub_55A0DF892CE0(v, -(v10 &gt;&gt; 2), key);  &#x2F;&#x2F; stea(v,-2,key)</span><br></pre></td></tr></table></figure>
+
+<p>结合其他有关信息可以简单看出函数参数v为两个32位无符号数， <strong>-(v10 &gt;&gt; 2)</strong>的值为<strong>-2</strong>，key为128位密钥，它们是<strong>0xE0C7E0C7, 0xC6F1D3D7, 0xC6D3C6D3, 0xC4D0D2CE</strong>，此处调用了XXTEAdecode对两个32位无符号数进行解密，解密结果与之后的常量异或后比较判断</p>
+<p>整个题目的核心算法就是XXTEA，只要识别出该算法，那么逆向将变得非常简单，逻辑无非就是输入一个16进制字符串之后hexencode，得到一个64位无符号数（即2个32位无符号数），然后将之2个32位无符号数xxteadecrypt得到新的64位无符号数，此处要求最后一个字节的值小于0x4，并将第（8-最后一个字节的值+1）字节的值置为00，而后将之经下一个函数进行一些位操作验证结果是否等于0x69e2,这一步并不改变原有值无视之，最终验证按字节与0x17异或出来结果是否为Bingo!，结合上面猜测第7字节的值为00，最后一个字节值为0x02，且md5(rctf{flag})==5f8243a662cf71bf31d2b2602638dc1d，由此可以确定最终解密后的64位无符号数的值为0x02XX367870797e55(小端序)，直接写脚本就可以爆破次高8位即可，依次就可以得到该题的flag了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;openssl&#x2F;md5.h&gt;</span><br><span class="line">#include &lt;cstdio&gt;</span><br><span class="line">#include &lt;cstring&gt;</span><br><span class="line">#include &lt;iostream&gt;</span><br><span class="line">#include &lt;string&gt;</span><br><span class="line">using namespace std;</span><br><span class="line">&#x2F;&#x2F; -lcrypto</span><br><span class="line">string MD5(const string&amp; src) &#123;</span><br><span class="line">  MD5_CTX ctx;</span><br><span class="line"></span><br><span class="line">  string md5_string;</span><br><span class="line">  unsigned char md[16] &#x3D; &#123;0&#125;;</span><br><span class="line">  char tmp[33] &#x3D; &#123;0&#125;;</span><br><span class="line"></span><br><span class="line">  MD5_Init(&amp;ctx);</span><br><span class="line">  MD5_Update(&amp;ctx, src.c_str(), src.size());</span><br><span class="line">  MD5_Final(md, &amp;ctx);</span><br><span class="line"></span><br><span class="line">  for (int i &#x3D; 0; i &lt; 16; ++i) &#123;</span><br><span class="line">    memset(tmp, 0x00, sizeof(tmp));</span><br><span class="line">    sprintf(tmp, &quot;%02X&quot;, md[i]);</span><br><span class="line">    md5_string +&#x3D; tmp;</span><br><span class="line">  &#125;</span><br><span class="line">  return md5_string;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">string aaa(unsigned int* v) &#123;</span><br><span class="line">  string str;</span><br><span class="line">  for (size_t i &#x3D; 0; i &lt; 2; i++) &#123;</span><br><span class="line">    for (size_t j &#x3D; 0; j &lt; 8; j +&#x3D; 2) &#123;</span><br><span class="line">      unsigned char cur &#x3D; v[i] &amp; 0xff;</span><br><span class="line">      str +&#x3D; ((cur &amp; 0xf0) &gt;&gt; 4) &lt; 10 ? (((cur &amp; 0xf0) &gt;&gt; 4) + 0x30)</span><br><span class="line">                                      : (((cur &amp; 0xf0) &gt;&gt; 4) + 0x57);</span><br><span class="line">      str +&#x3D; (cur &amp; 0x0f) &lt; 10 ? ((cur &amp; 0x0f) + 0x30) : ((cur &amp; 0x0f) + 0x57);</span><br><span class="line">      v[i] &gt;&gt;&#x3D; 8;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  return str;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">#define MX \</span><br><span class="line">  ((z &gt;&gt; 5 ^ y &lt;&lt; 2) + (y &gt;&gt; 3 ^ z &lt;&lt; 4) ^ (sum ^ y) + (k[p &amp; 3 ^ e] ^ z))</span><br><span class="line">bool btea(unsigned int* v, int n, unsigned int* k) &#123;</span><br><span class="line">  unsigned int z &#x3D; v[n - 1], y &#x3D; v[0], sum &#x3D; 0, e, DELTA &#x3D; 0x9e3779b9;</span><br><span class="line">  unsigned int p, q;</span><br><span class="line">  if (n &gt; 1) &#123; &#x2F;* Coding Part *&#x2F;</span><br><span class="line">    q &#x3D; 6 + 52 &#x2F; n;</span><br><span class="line">    while (q-- &gt; 0) &#123;</span><br><span class="line">      sum +&#x3D; DELTA;</span><br><span class="line">      e &#x3D; (sum &gt;&gt; 2) &amp; 3;</span><br><span class="line">      for (p &#x3D; 0; p &lt; n - 1; p++)</span><br><span class="line">        y &#x3D; v[p + 1], z &#x3D; v[p] +&#x3D; MX;</span><br><span class="line">      y &#x3D; v[0];</span><br><span class="line">      z &#x3D; v[n - 1] +&#x3D; MX;</span><br><span class="line">    &#125;</span><br><span class="line">    return 0;</span><br><span class="line">  &#125; else if (n &lt; -1) &#123; &#x2F;* Decoding Part *&#x2F;</span><br><span class="line">    n &#x3D; -n;</span><br><span class="line">    q &#x3D; 6 + 52 &#x2F; n;</span><br><span class="line">    sum &#x3D; q * DELTA;</span><br><span class="line">    while (sum !&#x3D; 0) &#123;</span><br><span class="line">      e &#x3D; (sum &gt;&gt; 2) &amp; 3;</span><br><span class="line">      for (p &#x3D; n - 1; p &gt; 0; p--)</span><br><span class="line">        z &#x3D; v[p - 1], y &#x3D; v[p] -&#x3D; MX;</span><br><span class="line">      z &#x3D; v[n - 1];</span><br><span class="line">      y &#x3D; v[0] -&#x3D; MX;</span><br><span class="line">      sum -&#x3D; DELTA;</span><br><span class="line">    &#125;</span><br><span class="line">    return 0;</span><br><span class="line">  &#125;</span><br><span class="line">  return 1;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main() &#123;</span><br><span class="line">  &#x2F;&#x2F; 55 7e 79 70 78 36 xx 02</span><br><span class="line">  unsigned int t[2] &#x3D; &#123;0x70797e55, 0x02003678&#125;;</span><br><span class="line">  unsigned int v[2] &#x3D; &#123;0, 0&#125;;</span><br><span class="line">  unsigned int key[4] &#x3D; &#123;0xE0C7E0C7, 0xC6F1D3D7, 0xC6D3C6D3, 0xC4D0D2CE&#125;;</span><br><span class="line">  string flagmd5 &#x3D; &quot;5F8243A662CF71BF31D2B2602638DC1D&quot;;</span><br><span class="line"></span><br><span class="line">  for (unsigned long long i &#x3D; 0x0; i &lt;&#x3D; 0xff; i +&#x3D; 0x1) &#123;</span><br><span class="line">    v[0] &#x3D; t[0];</span><br><span class="line">    v[1] &#x3D; t[1] | (i &lt;&lt; 16);</span><br><span class="line">    string flag &#x3D; &quot;&quot;;</span><br><span class="line">    flag +&#x3D; &quot;rctf&#123;&quot;;</span><br><span class="line">    btea(v, 2, key);</span><br><span class="line">    flag +&#x3D; aaa(v);</span><br><span class="line">    flag +&#x3D; &quot;&#125;&quot;;</span><br><span class="line">    cout &lt;&lt; flag &lt;&lt; endl;</span><br><span class="line">    if (MD5(flag) &#x3D;&#x3D; flagmd5) &#123;</span><br><span class="line">      cout &lt;&lt; &quot;success!&quot; &lt;&lt; endl;</span><br><span class="line">      cout &lt;&lt; flag &lt;&lt; endl;</span><br><span class="line">      return 0;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="TX-TEA魔改算法"><a href="#TX-TEA魔改算法" class="headerlink" title="TX TEA魔改算法"></a>TX TEA魔改算法</h2><blockquote>
+<p>TX 将TEA算法魔改成16轮（TEA保密的最低要求）并且广泛应用</p>
+</blockquote>
+<p>相关内容可以看这里<a href="https://github.com/iweizime/StepChanger/wiki/腾讯TEA加密算法" target="_blank" rel="noopener">腾讯TEA加密算法</a></p>
+<p>主要就是将加密轮次改为16轮，并且采用改进的CBC模式加密</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>对于TEA系列算法的识别只要依据常数<strong>0x9e3779b9</strong>并且其相关加密结构就可以很容易判断是TEA、XTEA亦或XXTEA，之后只要找到其密文以及加密密钥辅以以上加解密实现代码就可以很快解密了，TEA算法在逆向分析中，IDA反编译以后一般都是比较清晰的，只要有一定的了解就能轻而易举的识别出对应算法，而后动态调试验证即可，至于findcrypto3插件识别也是依据常数识别的，所以只要知道这个特征即可。</p>
+<h2 id="附件"><a href="#附件" class="headerlink" title="附件"></a>附件</h2><p><a href="https://www.lanzous.com/i5572od" target="_blank" rel="noopener">TEA系列算法源码</a></p>
+<p><a href="https://www.lanzous.com/i5572qf" target="_blank" rel="noopener">2019RCTF babyre</a></p>
+<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><p><a href="https://en.wikipedia.org/wiki/Tiny_Encryption_Algorithm" target="_blank" rel="noopener">Tiny Encryption Algorithm</a></p>
+<p><a href="https://en.wikipedia.org/wiki/XTEA" target="_blank" rel="noopener">XTEA</a></p>
+<p><a href="https://en.wikipedia.org/wiki/XXTEA" target="_blank" rel="noopener">XXTEA</a></p>
+<p><a href="https://www.jianshu.com/p/4272e0805da3" target="_blank" rel="noopener">TEA、XTEA、XXTEA加密解密算法</a></p>
+<p>加密与解密第四版—TEA算法</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Crypto/" rel="tag"><i class="fa fa-tag"></i>Crypto</a>
+          
+            <a href="/tags/TEA/" rel="tag"><i class="fa fa-tag"></i>TEA</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/08/24/2019SUCTF/" rel="next" title="2019SUCTF Crypto&&Reverse writeup">
+                <i class="fa fa-chevron-left"></i> 2019SUCTF Crypto&&Reverse writeup
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/08/31/2019XNUCA/" rel="prev" title="2019XNUCA Reverse 部分Writeup">
+                2019XNUCA Reverse 部分Writeup <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/feng.jpg"
+                alt="feng" />
+            
+              <p class="site-author-name" itemprop="name">feng</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yifeng-lee" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:feng@m.scnu.edu.cn" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#关于TEA系列算法"><span class="nav-number">1.</span> <span class="nav-text">关于TEA系列算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#加解密实现"><span class="nav-number">2.</span> <span class="nav-text">加解密实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#TEA加解密实现"><span class="nav-number">2.1.</span> <span class="nav-text">TEA加解密实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#XTEA加解密实现"><span class="nav-number">2.2.</span> <span class="nav-text">XTEA加解密实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#XXTEA加解密实现"><span class="nav-number">2.3.</span> <span class="nav-text">XXTEA加解密实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#XXTEA逆向分析"><span class="nav-number">3.</span> <span class="nav-text">XXTEA逆向分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TX-TEA魔改算法"><span class="nav-number">4.</span> <span class="nav-text">TX TEA魔改算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#附件"><span class="nav-number">6.</span> <span class="nav-text">附件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考文献"><span class="nav-number">7.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright"><font color=black face=STLiti>Copyright &nbsp;</font><font color=black>&copy;</font> <font color=black face=STLiti><span itemprop="copyrightYear">2020</span></font>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder" style="font-family:STLiti;color:black;">feng . All Rights Reserved.</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
