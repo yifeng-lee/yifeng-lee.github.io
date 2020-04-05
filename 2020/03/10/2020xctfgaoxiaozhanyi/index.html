@@ -90,15 +90,15 @@
 
 
 
-<meta name="description" content="周末花了几个小时看了一下题目，做了几道逆向  cycle graph有向图求通路，长度16，然后根据节点权值就可以计算flag，节点只有32个直接手工画个树状图一下子就搞定了，代码都不用写 123456789101112131415161718192021222324252627282930313233343536&#39;&#39;&#39;.data:006A3380 stru_6A3380">
+<meta name="description" content="周末花了几个小时看了一下题目，做了几道逆向">
 <meta property="og:type" content="article">
 <meta property="og:title" content="高校战“疫”网络安全分享赛">
 <meta property="og:url" content="http://yoursite.com/2020/03/10/2020xctfgaoxiaozhanyi/index.html">
 <meta property="og:site_name" content="feng&#39;s blog">
-<meta property="og:description" content="周末花了几个小时看了一下题目，做了几道逆向  cycle graph有向图求通路，长度16，然后根据节点权值就可以计算flag，节点只有32个直接手工画个树状图一下子就搞定了，代码都不用写 123456789101112131415161718192021222324252627282930313233343536&#39;&#39;&#39;.data:006A3380 stru_6A3380">
+<meta property="og:description" content="周末花了几个小时看了一下题目，做了几道逆向">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-03-10T14:55:51.000Z">
-<meta property="article:modified_time" content="2020-03-11T00:51:46.733Z">
+<meta property="article:modified_time" content="2020-04-05T10:06:56.413Z">
 <meta property="article:author" content="feng">
 <meta property="article:tag" content="CTF">
 <meta property="article:tag" content="Reverse">
@@ -332,9 +332,8 @@
       
 
       
-        <blockquote>
-<p>周末花了几个小时看了一下题目，做了几道逆向</p>
-</blockquote>
+        <p>周末花了几个小时看了一下题目，做了几道逆向</p>
+<a id="more"></a>
 <h3 id="cycle-graph"><a href="#cycle-graph" class="headerlink" title="cycle graph"></a>cycle graph</h3><p>有向图求通路，长度16，然后根据节点权值就可以计算flag，节点只有32个直接手工画个树状图一下子就搞定了，代码都不用写</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">&#39;&#39;&#39;</span><br><span class="line">.data:006A3380 stru_6A3380 struc_6A3380 &lt;34h, offset stru_6A3398, offset stru_6A338C&gt; 164</span><br><span class="line">.data:006A338C stru_6A338C struc_6A338C &lt;2, offset stru_6A3398, offset stru_6A33E0&gt;</span><br><span class="line">.data:006A3398 stru_6A3398 struc_6A3398 &lt;2Ch, offset stru_6A338C, offset stru_6A33D4&gt; 238</span><br><span class="line">.data:006A33A4 stru_6A33A4 struc_6A33A4 &lt;2Ah, offset stru_6A3458, offset stru_6A3494&gt;961</span><br><span class="line">.data:006A33B0 stru_6A33B0 struc_6A33B0 &lt;6, offset stru_6A33D4, offset stru_6A33EC&gt;</span><br><span class="line">.data:006A33BC stru_6A33BC struc_6A33BC &lt;2Ah, offset stru_6A3398, offset stru_6A3464&gt; 739</span><br><span class="line">.data:006A33C8 stru_6A33C8 struc_6A33C8 &lt;2Fh, offset stru_6A34B8, offset stru_6A34F4&gt;1532</span><br><span class="line">.data:006A33D4 stru_6A33D4 struc_6A33D4 &lt;2Ah, offset stru_6A341C, offset stru_6A3494&gt; 362</span><br><span class="line">.data:006A33E0 stru_6A33E0 struct_6A33E0 &lt;33h, offset stru_6A33B0, offset stru_6A33EC&gt;</span><br><span class="line">.data:006A33EC stru_6A33EC struct_6A33EC &lt;3, offset stru_6A33F8, offset stru_6A341C&gt;</span><br><span class="line">.data:006A33F8 stru_6A33F8 struc_6A33F8 &lt;2, offset stru_6A33B0, offset stru_6A3410&gt;</span><br><span class="line">.data:006A3404 stru_6A3404 struc_6A3404 &lt;32h, offset stru_6A347C, offset stru_6A34DC&gt;1362</span><br><span class="line">.data:006A3410 stru_6A3410 struc_6A3410 &lt;32h, offset stru_6A3428, offset stru_6A33F8&gt;</span><br><span class="line">.data:006A341C stru_6A341C struc_6A341C &lt;32h, offset stru_6A338C, offset stru_6A34A0&gt; 430</span><br><span class="line">.data:006A3428 stru_6A3428 struc_6A3428 &lt;30h, offset stru_6A3380, offset stru_6A33EC&gt;</span><br><span class="line">.data:006A3434 stru_6A3434 struc_6A3434 &lt;3, offset stru_6A3428, offset stru_6A34A0&gt;</span><br><span class="line">.data:006A3440 stru_6A3440 struc_6A3440 &lt;1, offset stru_6A33BC, offset stru_6A34AC&gt;663</span><br><span class="line">.data:006A344C stru_6A344C struc_6A344C &lt;32h, offset stru_6A33D4, offset stru_6A33EC&gt;</span><br><span class="line">.data:006A3458 stru_6A3458 struc_6A3458 &lt;2Bh, offset stru_6A34D0, offset stru_6A34B8&gt;1036</span><br><span class="line">.data:006A3464 stru_6A3464 struc_6A3464 &lt;2, offset stru_6A3410, offset stru_6A33A4&gt;837</span><br><span class="line">.data:006A3470 stru_6A3470 struc_6A3470 &lt;2Eh, offset stru_6A34D0, offset stru_6A3488&gt;</span><br><span class="line">.data:006A347C stru_6A347C struct_6A347C &lt;1, offset stru_6A3434, offset stru_6A33C8&gt;1461</span><br><span class="line">.data:006A3488 stru_6A3488 struc_6A3488 &lt;2, offset stru_6A3434, offset stru_6A344C&gt;</span><br><span class="line">.data:006A3494 stru_6A3494 struc_6A3494 &lt;2Dh, offset stru_6A3398, offset stru_6A341C&gt;</span><br><span class="line">.data:006A34A0 stru_6A34A0 struc_6A34A0 &lt;32h, offset stru_6A3440, offset stru_6A33D4&gt;562</span><br><span class="line">.data:006A34AC stru_6A34AC struc_6A34AC &lt;4, offset stru_6A3494, offset stru_6A3434&gt;</span><br><span class="line">.data:006A34B8 stru_6A34B8 struc_6A34B8 &lt;2Dh, offset stru_6A34E8, offset stru_6A3470&gt;1163</span><br><span class="line">.data:006A34C4 stru_6A34C4 struc_6A34B8 &lt;30h, offset stru_6A3494, offset stru_6A338C&gt;</span><br><span class="line">.data:006A34D0 stru_6A34D0 struc_6A34D0 &lt;31h, offset stru_6A3464, offset stru_6A3440&gt;</span><br><span class="line">.data:006A34DC stru_6A34DC struc_6A34DC &lt;2Fh, offset stru_6A33EC, offset stru_6A33B0&gt;</span><br><span class="line">.data:006A34E8 stru_6A34E8 struc_6A34E8 &lt;33h, offset stru_6A3488, offset stru_6A3404&gt;1230</span><br><span class="line">.data:006A34F4 stru_6A34F4 struc_6A34F4 &lt;5, offset stru_6A34F4, offset stru_6A34F4&gt;1537</span><br><span class="line">&#39;&#39;&#39;</span><br><span class="line"># d8b0bc97a6c0ba27</span><br><span class="line"># flag&#123;d8b0bc97a6c0ba27&#125;</span><br></pre></td></tr></table></figure>
 
@@ -401,6 +400,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/04/05/2020%E6%98%A5%E6%8B%9B/" rel="prev" title="蒻鶸的春招之路">
+                蒻鶸的春招之路 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -481,7 +484,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-count">15</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -494,7 +497,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-count">13</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>

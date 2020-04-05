@@ -90,15 +90,15 @@
 
 
 
-<meta name="description" content="RE Clever Bird100401D0E  |.  66:0F6E45 8C  movd mm0,[local.29]  get score 1234567891011121300401D13  |.  B9 D859375F   mov ecx,0x5F3759D800401D18  |.  0f5bc0        cvtdq2ps xmm0,xmm000401D1B  |.  F3:">
+<meta name="description" content="目前遇到最难的一场比赛了,Crypto打不动,只做了比较简单的RE还好苟进了决赛~(200多支队伍，几十支顺利签到">
 <meta property="og:type" content="article">
 <meta property="og:title" content="2019XNUCA Reverse 部分Writeup">
 <meta property="og:url" content="http://yoursite.com/2019/08/31/2019XNUCA/index.html">
 <meta property="og:site_name" content="feng&#39;s blog">
-<meta property="og:description" content="RE Clever Bird100401D0E  |.  66:0F6E45 8C  movd mm0,[local.29]  get score 1234567891011121300401D13  |.  B9 D859375F   mov ecx,0x5F3759D800401D18  |.  0f5bc0        cvtdq2ps xmm0,xmm000401D1B  |.  F3:">
+<meta property="og:description" content="目前遇到最难的一场比赛了,Crypto打不动,只做了比较简单的RE还好苟进了决赛~(200多支队伍，几十支顺利签到">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2019-08-30T16:00:00.000Z">
-<meta property="article:modified_time" content="2020-02-18T05:30:54.345Z">
+<meta property="article:modified_time" content="2020-04-05T10:11:27.394Z">
 <meta property="article:author" content="feng">
 <meta property="article:tag" content="CTF">
 <meta property="article:tag" content="Writeup">
@@ -333,7 +333,9 @@
       
 
       
-        <h2 id="RE-Clever-Bird"><a href="#RE-Clever-Bird" class="headerlink" title="RE Clever Bird"></a>RE Clever Bird</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">00401D0E  |.  66:0F6E45 8C  movd mm0,[local.29]</span><br></pre></td></tr></table></figure>
+        <p>目前遇到最难的一场比赛了,Crypto打不动,只做了比较简单的RE还好苟进了决赛~(200多支队伍，几十支顺利签到</p>
+<a id="more"></a>
+<h2 id="RE-Clever-Bird"><a href="#RE-Clever-Bird" class="headerlink" title="RE Clever Bird"></a>RE Clever Bird</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">00401D0E  |.  66:0F6E45 8C  movd mm0,[local.29]</span><br></pre></td></tr></table></figure>
 
 <p>get score</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">00401D13  |.  B9 D859375F   mov ecx,0x5F3759D8</span><br><span class="line">00401D18  |.  0f5bc0        cvtdq2ps xmm0,xmm0</span><br><span class="line">00401D1B  |.  F3:0F1185 5CF&gt;movss [local.41],xmm0</span><br><span class="line">00401D23  |.  0F28C8        movaps xmm1,xmm0</span><br><span class="line">00401D26  |.  8B85 5CFFFFFF mov eax,[local.41]</span><br><span class="line">00401D2C  |.  F3:0F590D 884&gt;mulss xmm1,dword ptr ds:[0x404388]</span><br><span class="line">00401D34  |.  D1F8          sar eax,1</span><br><span class="line">00401D36  |.  2BC8          sub ecx,eax</span><br><span class="line">00401D38  |.  898D 5CFFFFFF mov [local.41],ecx</span><br><span class="line">00401D3E  |.  F3:0F114D C4  movss [local.15],xmm1</span><br><span class="line">00401D43  |.  74 09         je short Clever_B.00401D4E</span><br><span class="line">00401D45  |.  83C1 07       add ecx,0x7</span><br><span class="line">00401D48  |.  898D 5CFFFFFF mov [local.41],ecx</span><br></pre></td></tr></table></figure>
@@ -500,7 +502,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-count">15</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -513,7 +515,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-count">13</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>

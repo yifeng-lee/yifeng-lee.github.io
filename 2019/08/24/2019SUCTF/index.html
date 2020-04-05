@@ -90,15 +90,15 @@
 
 
 
-<meta name="description" content="Crypto AK指南DSA共r攻击得到x，对消息签名得到flag 123456789101112131415161718192021222324252627282930#coding&#x3D;utf8from Crypto.PublicKey import DSAfrom hashlib import sha1import gmpy2y &#x3D; 599989644227205674109">
+<meta name="description" content="SUCTF Crypto&amp;&amp;Reverse">
 <meta property="og:type" content="article">
 <meta property="og:title" content="2019SUCTF Crypto&amp;&amp;Reverse writeup">
 <meta property="og:url" content="http://yoursite.com/2019/08/24/2019SUCTF/index.html">
 <meta property="og:site_name" content="feng&#39;s blog">
-<meta property="og:description" content="Crypto AK指南DSA共r攻击得到x，对消息签名得到flag 123456789101112131415161718192021222324252627282930#coding&#x3D;utf8from Crypto.PublicKey import DSAfrom hashlib import sha1import gmpy2y &#x3D; 599989644227205674109">
+<meta property="og:description" content="SUCTF Crypto&amp;&amp;Reverse">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2019-08-23T16:00:00.000Z">
-<meta property="article:modified_time" content="2020-02-18T08:15:38.612Z">
+<meta property="article:modified_time" content="2020-04-05T10:08:33.659Z">
 <meta property="article:author" content="feng">
 <meta property="article:tag" content="CTF">
 <meta property="article:tag" content="Crypto">
@@ -334,7 +334,9 @@
       
 
       
-        <h2 id="Crypto-AK指南"><a href="#Crypto-AK指南" class="headerlink" title="Crypto AK指南"></a>Crypto AK指南</h2><h3 id="DSA"><a href="#DSA" class="headerlink" title="DSA"></a>DSA</h3><p>共r攻击得到x，对消息签名得到flag</p>
+        <p>SUCTF Crypto&amp;&amp;Reverse</p>
+<a id="more"></a>
+<h2 id="Crypto-AK指南"><a href="#Crypto-AK指南" class="headerlink" title="Crypto AK指南"></a>Crypto AK指南</h2><h3 id="DSA"><a href="#DSA" class="headerlink" title="DSA"></a>DSA</h3><p>共r攻击得到x，对消息签名得到flag</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">#coding&#x3D;utf8</span><br><span class="line">from Crypto.PublicKey import DSA</span><br><span class="line">from hashlib import sha1</span><br><span class="line">import gmpy2</span><br><span class="line">y &#x3D; 59998964422720567410971392247588610270838161207397035632002275213137280191832120978879710500476700732252657163883040778110433361229025561528932261647267356601327288870079034283219825305854917122470476263679775684658309724956217086373271094822923565839520323861656876204763501285315938099749485745556365977385</span><br><span class="line">g &#x3D; 43389854742161278437795219923942481775415347045657754950101547258603126039442015413837081119910836292884272763216819814465391926154918568052023904893455646228551404626313275513364910490826315111525183581985725183125157061116286909065516135519389601010524077855226671936609315614619488171104373006393843535936</span><br><span class="line">p &#x3D; 89884656743115797306463115781658547652701352914216992134724261350662138610779037881598639133132443399775174755349212745086191371006305803101408979382417949745858915745624526163699132112106657340987225858815360563806509539737133045727525608405157417768282568991275850018080217110159142086149521127066321887933</span><br><span class="line">q &#x3D; 947518380736106120979020081716052995250920349441</span><br><span class="line">m3 &#x3D; 307693878875281197163704550997724119116</span><br><span class="line">m4 &#x3D; 27650803417371457807064002936379775828</span><br><span class="line">s3 &#x3D; 204284014447639360127701931752666127662919593553</span><br><span class="line">s4 &#x3D; 807037783913314060221428202522519970102697802927</span><br><span class="line">r &#x3D; 107149838461499022506747607203457736319293892939</span><br><span class="line">ds &#x3D; s4 - s3</span><br><span class="line">dm &#x3D; m4 - m3</span><br><span class="line">k &#x3D; gmpy2.mul(dm, gmpy2.invert(ds, q))</span><br><span class="line">k &#x3D; gmpy2.f_mod(k, q)</span><br><span class="line">tmp &#x3D; gmpy2.mul(k, s3) - m3</span><br><span class="line">x &#x3D; tmp * gmpy2.invert(r, q)</span><br><span class="line">x &#x3D; gmpy2.f_mod(x, q)</span><br><span class="line">print(x)</span><br><span class="line">print(k)</span><br><span class="line">mes &#x3D; 334436397493699539473999398012751306876</span><br><span class="line">r1 &#x3D; gmpy2.powmod(g,k,p)</span><br><span class="line">r1 &#x3D; r1 % q</span><br><span class="line">s1 &#x3D; (gmpy2.invert(k,q)*(mes+x*r))%q</span><br><span class="line">print(&#39;k&#39;,k)</span><br><span class="line">print(&#39;x&#39;,x)</span><br><span class="line">print(&#39;(%d, %d)&#39;%(r1,s1))</span><br><span class="line"># (1070334240122464358241089769633029668974770861682L, 1222791079228374886029529242891467967573428488490L)</span><br></pre></td></tr></table></figure>
 
 <h3 id="MT"><a href="#MT" class="headerlink" title="MT"></a>MT</h3><p>angr或z3求解</p>
@@ -495,7 +497,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-count">15</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -508,7 +510,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-count">13</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>

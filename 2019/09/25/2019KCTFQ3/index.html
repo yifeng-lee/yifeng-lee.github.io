@@ -90,15 +90,15 @@
 
 
 
-<meta name="description" content="暑假无聊花了几个小时出了一道题，半天就被dalao秒了，tql！所幸还苟到了前九，以下的设计思路和解题思路  题目答案:VXX&#x2F;8AKlVXV8&#x2F;wCpVXV9&#x2F;DCogeWKJMtrmeY&#x3D; 设计思路:输入一个字符串，第一个check，check长度是否小于等于48，第二个check使用了梅森翻转算法、xxtea加密算法，check字符串的第一个字节，以第一个字节作为随机数种子，由梅森翻转算法">
+<meta name="description" content="暑假无聊花了几个小时出了一道题，半天就被dalao秒了，tql！所幸还苟到了前九，以下的设计思路和解题思路">
 <meta property="og:type" content="article">
 <meta property="og:title" content="KCTFQ3 第五题设计思路">
 <meta property="og:url" content="http://yoursite.com/2019/09/25/2019KCTFQ3/index.html">
 <meta property="og:site_name" content="feng&#39;s blog">
-<meta property="og:description" content="暑假无聊花了几个小时出了一道题，半天就被dalao秒了，tql！所幸还苟到了前九，以下的设计思路和解题思路  题目答案:VXX&#x2F;8AKlVXV8&#x2F;wCpVXV9&#x2F;DCogeWKJMtrmeY&#x3D; 设计思路:输入一个字符串，第一个check，check长度是否小于等于48，第二个check使用了梅森翻转算法、xxtea加密算法，check字符串的第一个字节，以第一个字节作为随机数种子，由梅森翻转算法">
+<meta property="og:description" content="暑假无聊花了几个小时出了一道题，半天就被dalao秒了，tql！所幸还苟到了前九，以下的设计思路和解题思路">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2019-09-24T16:00:00.000Z">
-<meta property="article:modified_time" content="2020-02-18T05:47:03.868Z">
+<meta property="article:modified_time" content="2020-04-05T10:08:02.407Z">
 <meta property="article:author" content="feng">
 <meta property="article:tag" content="CTF">
 <meta property="article:tag" content="Reverse">
@@ -332,9 +332,8 @@
       
 
       
-        <blockquote>
-<p>暑假无聊花了几个小时出了一道题，半天就被dalao秒了，tql！所幸还苟到了前九，以下的设计思路和解题思路</p>
-</blockquote>
+        <p>暑假无聊花了几个小时出了一道题，半天就被dalao秒了，tql！所幸还苟到了前九，以下的设计思路和解题思路</p>
+<a id="more"></a>
 <p><strong>题目答案:VXX/8AKlVXV8/wCpVXV9/DCogeWKJMtrmeY=</strong></p>
 <h3 id="设计思路"><a href="#设计思路" class="headerlink" title="设计思路:"></a>设计思路:</h3><p>输入一个字符串，第一个check，check长度是否小于等于48，第二个check使用了梅森翻转算法、xxtea加密算法，check字符串的第一个字节，以第一个字节作为随机数种子，由梅森翻转算法得到三个32bits整数，将第一个、第三个整数通过xxtea加密，密钥直接给出，为{0X67452301, 0XEFCDAB89, 0X98BADCFE, 0X10325476}，得到的结果相加得到v，由梅森翻转算法得到的第二个整数减去v得到res，检查是否等于2768546039，梅森翻转算法得到的随机数可预测，xxtea可逆，但是sn限定字符集为[33,126]，直接正向爆破秒解。第三个check，check输入的字符串与”Welcome/to/this/very/simple/challenge”相加之后的md5是否等于44e4403b63620a2075d3fb2e0a6207d2，此处不可逆，主要是check长度，直接跳过上面的check逆下面的算法就可以得到sn，所以直到此处所有的check几乎都是无用的，纯属误导。</p>
 <p>以下是真正的check且可逆，首先程序将输入的字符串取前36个字节base64decode，得到decode后的字节，应为26bytes，（此处暴露了sn长度应该为36个字节），之后对这26个字节进行分割，分割为v1，v2，v3，c，分别为6、6、6、8个字节，对输入的36个字节的前二十四个进行分割，分割为key1，key2，key3，均为8字节，之后进行3DES解密，密钥为key1key2key3，密文为c，即des_decrypt(key3,c),des_encrypt(key2,c),des_crypt(key3,c),最终得到的c为8字节明文，这里视为v4，之后是md5校验（此处如上所说并没有用），最终的校验是4个迷宫check，将上述得到的v1，v2，v3，v4分别送入迷宫check，正确的话预设值+1，最终检验预设值是否为4，即四个迷宫都要走完，迷宫均为13*13矩阵，起点为‘@’,终点为‘#’，除第一个显示给出外，其余三个均为在第一个迷宫的基础上动态生成。</p>
@@ -480,7 +479,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-count">15</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -493,7 +492,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-count">13</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>
