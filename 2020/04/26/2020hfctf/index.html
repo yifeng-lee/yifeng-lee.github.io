@@ -90,20 +90,22 @@
 
 
 
-<meta name="description" content="上周的比赛，wp忘记发了">
+<meta name="description" content="上周的比赛，wp忘记发了，部分题目下载">
 <meta property="og:type" content="article">
 <meta property="og:title" content="2020数字中国创新大赛 虎符网络安全赛道 WP">
 <meta property="og:url" content="http://yoursite.com/2020/04/26/2020hfctf/index.html">
 <meta property="og:site_name" content="feng&#39;s blog">
-<meta property="og:description" content="上周的比赛，wp忘记发了">
+<meta property="og:description" content="上周的比赛，wp忘记发了，部分题目下载">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://img-blog.csdn.net/20181007132017880?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI2ODE2NTkx/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70">
 <meta property="article:published_time" content="2020-04-26T01:31:24.000Z">
-<meta property="article:modified_time" content="2020-05-04T04:31:45.385Z">
+<meta property="article:modified_time" content="2020-05-04T04:53:23.147Z">
 <meta property="article:author" content="feng">
 <meta property="article:tag" content="CTF">
 <meta property="article:tag" content="Crypto">
 <meta property="article:tag" content="Reverse">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdn.net/20181007132017880?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI2ODE2NTkx/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70">
 
 
 
@@ -333,11 +335,14 @@
       
 
       
-        <p>上周的比赛，wp忘记发了</p>
+        <p>上周的比赛，wp忘记发了，<a href="https://lanzous.com/ic8s25a" target="_blank" rel="noopener">部分题目下载</a></p>
 <a id="more"></a>
 
 <p>带着新人打了一下hfctf，题目质量还行，排名刚好卡在决赛线外，有点可惜，写一个我做的几道题吧</p>
-<h2 id="Crypto"><a href="#Crypto" class="headerlink" title="Crypto"></a>Crypto</h2><h3 id="GM"><a href="#GM" class="headerlink" title="GM"></a>GM</h3><p>可以直接算出 p，然后解密即可</p>
+<h2 id="Crypto"><a href="#Crypto" class="headerlink" title="Crypto"></a>Crypto</h2><h3 id="GM"><a href="#GM" class="headerlink" title="GM"></a>GM</h3><p>Goldwasser - Micali加密算法</p>
+<p>图源:<a href="https://blog.csdn.net/qq_26816591/article/details/82957481" target="_blank" rel="noopener">https://blog.csdn.net/qq_26816591/article/details/82957481</a></p>
+<p><img src="https://img-blog.csdn.net/20181007132017880?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI2ODE2NTkx/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="gm"></p>
+<p>只要分解N就行了，然而题目可以直接算出 p，最后解密即可</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">p&#x3D;(n-phi+1-long(gmpy2.iroot((n-phi+1)**2-4*n,2)[0]))&#x2F;&#x2F;2</span><br></pre></td></tr></table></figure>
 
 <p>得到p 为</p>
