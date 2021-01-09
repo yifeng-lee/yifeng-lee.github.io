@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+<script>
+    (function(){
+        if(''){
+            if (prompt('请输入密码') !== ''){
+                alert('密码错误');
+                history.back();
+            }
+        }
+    })();
+</script>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="CTF,Reverse,Writeup," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="只做了三道RE，还好队友解了一道PWN，最终成功苟进了决赛圈,决赛拿了第九，不亏">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2020XNUCA Reverse 部分Writeup">
+<meta property="og:url" content="http://yoursite.com/2020/12/31/2020XNUCA/index.html">
+<meta property="og:site_name" content="feng&#39;s blog">
+<meta property="og:description" content="只做了三道RE，还好队友解了一道PWN，最终成功苟进了决赛圈,决赛拿了第九，不亏">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-12-30T16:00:00.000Z">
+<meta property="article:modified_time" content="2021-01-09T08:41:03.664Z">
+<meta property="article:author" content="feng">
+<meta property="article:tag" content="CTF">
+<meta property="article:tag" content="Reverse">
+<meta property="article:tag" content="Writeup">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/12/31/2020XNUCA/"/>
+
+
+
+
+
+  <title>2020XNUCA Reverse 部分Writeup | feng's blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">feng's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/12/31/2020XNUCA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="feng">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/feng.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="feng's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">2020XNUCA Reverse 部分Writeup</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-12-31T00:00:00+08:00">
+                2020-12-31
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>只做了三道RE，还好队友解了一道PWN，最终成功苟进了决赛圈,决赛拿了第九，不亏</p>
+<a id="more"></a>
+
+<h3 id="babyarm"><a href="#babyarm" class="headerlink" title="babyarm"></a><strong>babyarm</strong></h3><p>简单题，给了个假的check，向下看可以发现是xxtea加密算法</p>
+<p>xxtea decrypt，密钥 {2，2，3，4}，明文128bits，加密轮次9轮，<strong>重复加密16次</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; [+] Dump 0x230B4 - 0x230F4 (64 bytes) :</span><br><span class="line">&#x2F;&#x2F; &quot;\x13\xF0\x61\xB0\x7E\x56\xC8\xB3\xC7\xA3\x52\x99\x3F\x2D\x1C\x45\x67\x22\xE3\x3E\x3E\x2B\xE2\xE3\x50\xA2\xE5\x43\xD0\x8E\xB2\x59\xDC\x49\x86\x0F\x83\xD0\xF4\x9B\x10\x81\x57\x8A\x4F\xEC\x04\x86\x7F\xA2\xB5\x2E\xF3\xDD\x17\x12\x53\xB2\xC9\x93\x43\x8E\x7F\xDC&quot;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; [+] Dump 0x230B4 - 0x230F4 (64 bytes) :</span><br><span class="line">&#x2F;&#x2F; [0x13, 0xF0, 0x61, 0xB0, 0x7E, 0x56, 0xC8, 0xB3, 0xC7, 0xA3, 0x52, 0x99, 0x3F, 0x2D, 0x1C, 0x45, 0x67, 0x22, 0xE3, 0x3E, 0x3E, 0x2B, 0xE2, 0xE3, 0x50, 0xA2, 0xE5, 0x43, 0xD0, 0x8E, 0xB2, 0x59, 0xDC, 0x49, 0x86, 0x0F, 0x83, 0xD0, 0xF4, 0x9B, 0x10, 0x81, 0x57, 0x8A, 0x4F, 0xEC, 0x04, 0x86, 0x7F, 0xA2, 0xB5, 0x2E, 0xF3, 0xDD, 0x17, 0x12, 0x53, 0xB2, 0xC9, 0x93, 0x43, 0x8E, 0x7F, 0xDC]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#include &lt;stdbool.h&gt;</span><br><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#define MX \</span><br><span class="line">  ((z &gt;&gt; 5 ^ y &lt;&lt; 2) + (y &gt;&gt; 3 ^ z &lt;&lt; 4) ^ (sum ^ y) + (k[p &amp; 3 ^ e] ^ z))</span><br><span class="line">bool btea(unsigned int* v, int n, unsigned int* k) &#123;</span><br><span class="line">  unsigned int z &#x3D; v[n - 1], y &#x3D; v[0], sum &#x3D; 0, e, DELTA &#x3D; 0x9e3779b9;</span><br><span class="line">  unsigned int p, q;</span><br><span class="line">  if (n &gt; 1) &#123; &#x2F;* Coding Part *&#x2F;</span><br><span class="line">    q &#x3D; 6 + 52 &#x2F; n;</span><br><span class="line">    while (q-- &gt; 0) &#123;</span><br><span class="line">      sum +&#x3D; DELTA;</span><br><span class="line">      e &#x3D; (sum &gt;&gt; 2) &amp; 3;</span><br><span class="line">      for (p &#x3D; 0; p &lt; n - 1; p++)</span><br><span class="line">        y &#x3D; v[p + 1], z &#x3D; v[p] +&#x3D; MX;</span><br><span class="line">      y &#x3D; v[0];</span><br><span class="line">      z &#x3D; v[n - 1] +&#x3D; MX;</span><br><span class="line">    &#125;</span><br><span class="line">    return 0;</span><br><span class="line">  &#125; else if (n &lt; -1) &#123; &#x2F;* Decoding Part *&#x2F;</span><br><span class="line">    n &#x3D; -n;</span><br><span class="line">    q &#x3D; 6 + 52 &#x2F; n;</span><br><span class="line">    sum &#x3D; q * DELTA;</span><br><span class="line">    while (sum !&#x3D; 0) &#123;</span><br><span class="line">      e &#x3D; (sum &gt;&gt; 2) &amp; 3;</span><br><span class="line">      for (p &#x3D; n - 1; p &gt; 0; p--)</span><br><span class="line">        z &#x3D; v[p - 1], y &#x3D; v[p] -&#x3D; MX;</span><br><span class="line">      z &#x3D; v[n - 1];</span><br><span class="line">      y &#x3D; v[0] -&#x3D; MX;</span><br><span class="line">      sum -&#x3D; DELTA;</span><br><span class="line">    &#125;</span><br><span class="line">    return 0;</span><br><span class="line">  &#125;</span><br><span class="line">  return 1;</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F; flag&#123;this_is_not_flagthis_is_not_flagthis_is_not_flagthis_is_no&#125;</span><br><span class="line">int main(int argc, char const* argv[]) &#123;</span><br><span class="line">  &#x2F;&#x2F; test</span><br><span class="line">  unsigned int v[16] &#x3D; &#123;0xB061F013, 0xB3C8567E, 0x9952A3C7, 0x451C2D3F, 0x3EE32267, 0xE3E22B3E, 0x43E5A250, 0x59B28ED0, </span><br><span class="line">    0x0F8649DC, 0x9BF4D083, 0x8A578110, 0x8604EC4F, 0x2EB5A27F, 0x1217DDF3, 0x93C9B253, 0xDC7F8E43&#125;, key[4] &#x3D; &#123;2,2,3,4&#125;;</span><br><span class="line">  </span><br><span class="line">  for (size_t i &#x3D; 0; i &lt; 16; i++)</span><br><span class="line">  &#123;</span><br><span class="line">      btea(v, -16, key);</span><br><span class="line">  &#125;</span><br><span class="line">  for (size_t i &#x3D; 0; i &lt; 16; i++)</span><br><span class="line">  &#123;</span><br><span class="line">      printf(&quot;%x,&quot;,v[i]);</span><br><span class="line">  &#125;</span><br><span class="line">  puts(&quot;&quot;);</span><br><span class="line">  puts(v);</span><br><span class="line">    </span><br><span class="line">  return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>flag{D0cab07Fa45A2b6Ff7bAE6AaBbA5F5dcb3C9fDCE5afeF54DAC88A5093A}</p>
+<h3 id="Exception"><a href="#Exception" class="headerlink" title="Exception"></a><strong>Exception</strong></h3><p>这道题有点意思，最终也只有7队解了，主要是将几个部分揉成一团，再加上阴间反调试还有基本都是密码学，逆得是真的累，全靠静态硬刚。</p>
+<p>这里程序通过异常处理调用真正的加密函数来进行反调试，导致patch非常麻烦</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">.text:00401C6B ;   __try &#123; &#x2F;&#x2F; __except at loc_401C7B</span><br><span class="line">.text:00401C6B ;     __try &#123; &#x2F;&#x2F; __except at loc_401D2B</span><br><span class="line">.text:00401C6B                 mov     [ebp+ms_exc.registration.TryLevel], 1</span><br><span class="line">.text:00401C72                 int     3               ; Trap to Debugger</span><br><span class="line">.text:00401C73                 jmp     short loc_401CED</span><br><span class="line">.text:00401C75 ; ---------------------------------------------------------------------------</span><br><span class="line">.text:00401C75</span><br><span class="line">.text:00401C75 loc_401C75:                             ; DATA XREF: .rdata:stru_404500↓o</span><br><span class="line">.text:00401C75 ;   __except filter &#x2F;&#x2F; owned by 401C6B</span><br><span class="line">.text:00401C75                 call    sub_4019D0</span><br><span class="line">.text:00401C7A                 retn</span><br></pre></td></tr></table></figure>
+
+<p>flag有4part</p>
+<p>part1：</p>
+<p>魔改AES，s-box被魔改</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;*</span><br><span class="line"> * S-box transformation table</span><br><span class="line"> *&#x2F;</span><br><span class="line">static uint8_t s_box[256] &#x3D; &#123;0x29, 0x40, 0x57, 0x6E, 0x85, 0x9C, 0xB3, 0xCA, 0xE1, 0xF8, 0x0F, 0x26, 0x3D, 0x54, 0x6B, 0x82, 0x99, 0xB0, 0xC7, 0xDE, 0xF5, 0x0C, 0x23, 0x3A, 0x51, 0x68, 0x7F, 0x96, 0xAD, 0xC4, 0xDB, 0xF2, 0x09, 0x20, 0x37, 0x4E, 0x65, 0x7C, 0x93, 0xAA, 0xC1, 0xD8, 0xEF, 0x06, 0x1D, 0x34, 0x4B, 0x62, 0x79, 0x90, 0xA7, 0xBE, 0xD5, 0xEC, 0x03, 0x1A, 0x31, 0x48, 0x5F, 0x76, 0x8D, 0xA4, 0xBB, 0xD2, 0xE9, 0x00, 0x17, 0x2E, 0x45, 0x5C, 0x73, 0x8A, 0xA1, 0xB8, 0xCF, 0xE6, 0xFD, 0x14, 0x2B, 0x42, 0x59, 0x70, 0x87, 0x9E, 0xB5, 0xCC, 0xE3, 0xFA, 0x11, 0x28, 0x3F, 0x56, 0x6D, 0x84, 0x9B, 0xB2, 0xC9, 0xE0, 0xF7, 0x0E, 0x25, 0x3C, 0x53, 0x6A, 0x81, 0x98, 0xAF, 0xC6, 0xDD, 0xF4, 0x0B, 0x22, 0x39, 0x50, 0x67, 0x7E, 0x95, 0xAC, 0xC3, 0xDA, 0xF1, 0x08, 0x1F, 0x36, 0x4D, 0x64, 0x7B, 0x92, 0xA9, 0xC0, 0xD7, 0xEE, 0x05, 0x1C, 0x33, 0x4A, 0x61, 0x78, 0x8F, 0xA6, 0xBD, 0xD4, 0xEB, 0x02, 0x19, 0x30, 0x47, 0x5E, 0x75, 0x8C, 0xA3, 0xBA, 0xD1, 0xE8, 0xFF, 0x16, 0x2D, 0x44, 0x5B, 0x72, 0x89, 0xA0, 0xB7, 0xCE, 0xE5, 0xFC, 0x13, 0x2A, 0x41, 0x58, 0x6F, 0x86, 0x9D, 0xB4, 0xCB, 0xE2, 0xF9, 0x10, 0x27, 0x3E, 0x55, 0x6C, 0x83, 0x9A, 0xB1, 0xC8, 0xDF, 0xF6, 0x0D, 0x24, 0x3B, 0x52, 0x69, 0x80, 0x97, 0xAE, 0xC5, 0xDC, 0xF3, 0x0A, 0x21, 0x38, 0x4F, 0x66, 0x7D, 0x94, 0xAB, 0xC2, 0xD9, 0xF0, 0x07, 0x1E, 0x35, 0x4C, 0x63, 0x7A, 0x91, 0xA8, 0xBF, 0xD6, 0xED, 0x04, 0x1B, 0x32, 0x49, 0x60, 0x77, 0x8E, 0xA5, 0xBC, 0xD3, 0xEA, 0x01, 0x18, 0x2F, 0x46, 0x5D, 0x74, 0x8B, 0xA2, 0xB9, 0xD0, 0xE7, 0xFE, 0x15, 0x2C, 0x43, 0x5A, 0x71, 0x88, 0x9F, 0xB6, 0xCD, 0xE4, 0xFB, 0x12&#125;; </span><br><span class="line"></span><br><span class="line">&#x2F;*</span><br><span class="line"> * Inverse S-box transformation table</span><br><span class="line"> *&#x2F;</span><br><span class="line">static uint8_t inv_s_box[256] &#x3D; &#123;0x41, 0xE8, 0x8F, 0x36, 0xDD, 0x84, 0x2B, 0xD2, 0x79, 0x20, 0xC7, 0x6E, 0x15, 0xBC, 0x63, 0x0A, 0xB1, 0x58, 0xFF, 0xA6, 0x4D, 0xF4, 0x9B, 0x42, 0xE9, 0x90, 0x37, 0xDE, 0x85, 0x2C, 0xD3, 0x7A, 0x21, 0xC8, 0x6F, 0x16, 0xBD, 0x64, 0x0B, 0xB2, 0x59, 0x00, 0xA7, 0x4E, 0xF5, 0x9C, 0x43, 0xEA, 0x91, 0x38, 0xDF, 0x86, 0x2D, 0xD4, 0x7B, 0x22, 0xC9, 0x70, 0x17, 0xBE, 0x65, 0x0C, 0xB3, 0x5A, 0x01, 0xA8, 0x4F, 0xF6, 0x9D, 0x44, 0xEB, 0x92, 0x39, 0xE0, 0x87, 0x2E, 0xD5, 0x7C, 0x23, 0xCA, 0x71, 0x18, 0xBF, 0x66, 0x0D, 0xB4, 0x5B, 0x02, 0xA9, 0x50, 0xF7, 0x9E, 0x45, 0xEC, 0x93, 0x3A, 0xE1, 0x88, 0x2F, 0xD6, 0x7D, 0x24, 0xCB, 0x72, 0x19, 0xC0, 0x67, 0x0E, 0xB5, 0x5C, 0x03, 0xAA, 0x51, 0xF8, 0x9F, 0x46, 0xED, 0x94, 0x3B, 0xE2, 0x89, 0x30, 0xD7, 0x7E, 0x25, 0xCC, 0x73, 0x1A, 0xC1, 0x68, 0x0F, 0xB6, 0x5D, 0x04, 0xAB, 0x52, 0xF9, 0xA0, 0x47, 0xEE, 0x95, 0x3C, 0xE3, 0x8A, 0x31, 0xD8, 0x7F, 0x26, 0xCD, 0x74, 0x1B, 0xC2, 0x69, 0x10, 0xB7, 0x5E, 0x05, 0xAC, 0x53, 0xFA, 0xA1, 0x48, 0xEF, 0x96, 0x3D, 0xE4, 0x8B, 0x32, 0xD9, 0x80, 0x27, 0xCE, 0x75, 0x1C, 0xC3, 0x6A, 0x11, 0xB8, 0x5F, 0x06, 0xAD, 0x54, 0xFB, 0xA2, 0x49, 0xF0, 0x97, 0x3E, 0xE5, 0x8C, 0x33, 0xDA, 0x81, 0x28, 0xCF, 0x76, 0x1D, 0xC4, 0x6B, 0x12, 0xB9, 0x60, 0x07, 0xAE, 0x55, 0xFC, 0xA3, 0x4A, 0xF1, 0x98, 0x3F, 0xE6, 0x8D, 0x34, 0xDB, 0x82, 0x29, 0xD0, 0x77, 0x1E, 0xC5, 0x6C, 0x13, 0xBA, 0x61, 0x08, 0xAF, 0x56, 0xFD, 0xA4, 0x4B, 0xF2, 0x99, 0x40, 0xE7, 0x8E, 0x35, 0xDC, 0x83, 0x2A, 0xD1, 0x78, 0x1F, 0xC6, 0x6D, 0x14, 0xBB, 0x62, 0x09, 0xB0, 0x57, 0xFE, 0xA5, 0x4C, 0xF3, 0x9A&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>其他无变化，key和密文如下，解密即可</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">uint8_t key[] &#x3D; &#123;35,1,0,3,99,5,143,7,8,9,199,11,239,13,0,15,238,17,222,19,16,21,142,23,126,25,16,27,46,29,30,31&#125;;</span><br><span class="line"></span><br><span class="line">uint8_t in[] &#x3D; &#123;0x4D, 0x91, 0x0F, 0xD0, 0x04, 0xF1, 0xBA, 0x64, 0x59, 0xC9, 0xDA, 0xB3, 0x05, 0x99, 0x54, 0xDB&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>得到part1  <strong>pLeA5e_nEveR_UnD</strong></p>
+<p>part2：魔改base32，编码表为 0x20-0x51，直接解即可</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">import base64</span><br><span class="line">b32table &#x3D; &#39;ABCDEFGHIJKLMNOPQRSTUVWXYZ234567&#39;</span><br><span class="line">def b32decode(src, table):</span><br><span class="line"></span><br><span class="line">    if len(table) !&#x3D; 32:</span><br><span class="line">        return &#39;Table length error&#39;</span><br><span class="line">    </span><br><span class="line">    try:</span><br><span class="line">        dest &#x3D; base64.b32decode(src.translate(str.maketrans(table, b32table)).encode())</span><br><span class="line">    except Exception as e:</span><br><span class="line">        return e</span><br><span class="line"></span><br><span class="line">    try:</span><br><span class="line">        dest &#x3D; dest.decode()</span><br><span class="line">    except UnicodeDecodeError as identifier:</span><br><span class="line">        pass</span><br><span class="line">   </span><br><span class="line">    return dest</span><br><span class="line"></span><br><span class="line">table &#x3D; &#39;\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f\x20!&quot;#$%&amp;\&#39;()*+,-.&#x2F;0123&#39;</span><br><span class="line">cipher &#x3D; &#39;\x22\x24\x2e\x1a\x2e\x20\x1f\x28\x1a\x29\x26\x29\x18\x2d\x1c\x34&#39;</span><br><span class="line"></span><br><span class="line">print(b32decode(cipher, table)[::-1])</span><br></pre></td></tr></table></figure>
+
+<p>part2:<strong>eRe5t1m4t</strong></p>
+<p>part3:魔改RC6，初始化了子密钥，直接解密即可</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; __uint32_t keys[] &#x3D; &#123;0xb7e15163,0x5618cb1c,0xf45044d5,0x9287be8e,0x30bf3847,0xcef6b200,0x6d2e2bb9,0xb65a572,0xa99d1f2b,0x47d498e4,0xe60c129d,0x84438c56,0x227b060f,0xc0b27fc8,0x5ee9f981,0xfd21733a,0x9b58ecf3,0x399066ac,0xd7c7e065,0x75ff5a1e,0x1436d3d7,0xb26e4d90,0x50a5c749,0xeedd4102,0x8d14babb,0x2b4c3474,0xc983ae2d,0x67bb27e6,0x5f2a19f,0xa42a1b58,0x42619511,0xe0990eca,0x7ed08883,0x1d08023c,0xbb3f7bf5,0x5976f5ae,0xf7ae6f67,0x95e5e920,0x341d62d9,0xd254dc92,0x708c564b,0xec3d004,0xacfb49bd,0x4b32c376&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>随手一搜，<a href="http://www.codeforge.com/read/65331/JG.TXT__html" target="_blank" rel="noopener">http://www.codeforge.com/read/65331/JG.TXT__html</a></p>
+<p>直接get key</p>
+<p>unsigned char key[] = {0x01,0x23,0x45,0x67,0x89,0xab,0xcd,0xef,0xfe,0xdc,0xba,0x98,0x76,0x54,0x32,0x10};</p>
+<p>结合密文解密即可</p>
+<p>unsigned char cipher[] ={0xa5,0xf9,0x6e,0x68,0x22,0x3a,0x40,0xc9,0x7d,0xf2,0x38,0xa5,0x8b,0xc4,0xc7,0xa5};</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line"></span><br><span class="line">typedef unsigned int WORD;           &#x2F;* Should be 32-bit &#x3D; 4 bytes        *&#x2F;</span><br><span class="line">#define w 32                         &#x2F;* word size in bits                 *&#x2F;</span><br><span class="line">#define r 20                         &#x2F;* based on security estimates       *&#x2F;</span><br><span class="line">#define bytes (w &#x2F; 8)                &#x2F;* bytes per word                    *&#x2F;</span><br><span class="line">#define c ((b + bytes - 1) &#x2F; bytes)  &#x2F;* key in words, rounded up          *&#x2F;</span><br><span class="line">#define R24 (2 * r + 4)              &#x2F;* length of array S                 *&#x2F;</span><br><span class="line">#define lgw 5                        &#x2F;* log2(w) -- wussed out             *&#x2F;</span><br><span class="line">WORD S[R24 - 1];                     &#x2F;* Key schedule                      *&#x2F;</span><br><span class="line">WORD P &#x3D; 0xb7e15163, Q &#x3D; 0x9e3779b9; &#x2F;* magic constants                   *&#x2F;</span><br><span class="line">&#x2F;* Rotation operators. x must be unsigned, to get logical right shift     *&#x2F;</span><br><span class="line">#define ROTL(x, y) (((x) &lt;&lt; (y &amp; (w - 1))) | ((x) &gt;&gt; (w - (y &amp; (w - 1)))))</span><br><span class="line">#define ROTR(x, y) (((x) &gt;&gt; (y &amp; (w - 1))) | ((x) &lt;&lt; (w - (y &amp; (w - 1)))))</span><br><span class="line">&#x2F;&#x2F; __uint32_t keys[] &#x3D; &#123;0xb7e15163,0x5618cb1c,0xf45044d5,0x9287be8e,0x30bf3847,0xcef6b200,0x6d2e2bb9,0xb65a572,0xa99d1f2b,0x47d498e4,0xe60c129d,0x84438c56,0x227b060f,0xc0b27fc8,0x5ee9f981,0xfd21733a,0x9b58ecf3,0x399066ac,0xd7c7e065,0x75ff5a1e,0x1436d3d7,0xb26e4d90,0x50a5c749,0xeedd4102,0x8d14babb,0x2b4c3474,0xc983ae2d,0x67bb27e6,0x5f2a19f,0xa42a1b58,0x42619511,0xe0990eca,0x7ed08883,0x1d08023c,0xbb3f7bf5,0x5976f5ae,0xf7ae6f67,0x95e5e920,0x341d62d9,0xd254dc92,0x708c564b,0xec3d004,0xacfb49bd,0x4b32c376&#125;;</span><br><span class="line">    </span><br><span class="line">void rc6_keygen(unsigned char *K, int b)</span><br><span class="line">&#123;</span><br><span class="line">    int i, j, s, v;</span><br><span class="line">    WORD L[(32 + bytes - 1) &#x2F; bytes]; &#x2F;* Big enough for max b *&#x2F;</span><br><span class="line">    WORD A, B;</span><br><span class="line">    L[c - 1] &#x3D; 0;</span><br><span class="line">    for (i &#x3D; b - 1; i &gt;&#x3D; 0; i--)</span><br><span class="line">        L[i &#x2F; bytes] &#x3D; (L[i &#x2F; bytes] &lt;&lt; 8) + K[i];</span><br><span class="line">    S[0] &#x3D; P;</span><br><span class="line">    for (i &#x3D; 1; i &lt;&#x3D; 2 * r + 3; i++)</span><br><span class="line">        S[i] &#x3D; S[i - 1] + Q;</span><br><span class="line">    </span><br><span class="line">    A &#x3D; B &#x3D; i &#x3D; j &#x3D; 0;</span><br><span class="line">    v &#x3D; R24;</span><br><span class="line">    if (c &gt; v)</span><br><span class="line">        v &#x3D; c;</span><br><span class="line">    v *&#x3D; 3;</span><br><span class="line">    for (s &#x3D; 1; s &lt;&#x3D; v; s++)</span><br><span class="line">    &#123;</span><br><span class="line">        A &#x3D; S[i] &#x3D; ROTL(S[i] + A + B, 3);</span><br><span class="line">        B &#x3D; L[j] &#x3D; ROTL(L[j] + A + B, A + B);</span><br><span class="line">        i &#x3D; (i + 1) % R24;</span><br><span class="line">        j &#x3D; (j + 1) % c;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">void rc6_encrypt(unsigned char *plain, unsigned char *cipher)</span><br><span class="line">&#123;</span><br><span class="line">    WORD pt[4], ct[4];</span><br><span class="line">    for (int i &#x3D; 0; i &lt; 4; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        pt[i] &#x3D; plain[4 * i] + (plain[4 * i + 1] &lt;&lt; 8) + (plain[4 * i + 2] &lt;&lt; 16) + (plain[4 * i + 3] &lt;&lt; 24);</span><br><span class="line">    &#125;</span><br><span class="line">    WORD A, B, C, D, t, u, x;</span><br><span class="line">    A &#x3D; pt[0];</span><br><span class="line">    B &#x3D; pt[1];</span><br><span class="line">    C &#x3D; pt[2];</span><br><span class="line">    D &#x3D; pt[3];</span><br><span class="line">    B +&#x3D; S[0];</span><br><span class="line">    D +&#x3D; S[1];</span><br><span class="line">    for (int i &#x3D; 2; i &lt;&#x3D; 2 * r; i +&#x3D; 2)</span><br><span class="line">    &#123;</span><br><span class="line">        t &#x3D; ROTL(B * (2 * B + 1), lgw);</span><br><span class="line">        u &#x3D; ROTL(D * (2 * D + 1), lgw);</span><br><span class="line">        A &#x3D; ROTL(A ^ t, u) + S[i];</span><br><span class="line">        C &#x3D; ROTL(C ^ u, t) + S[i + 1];</span><br><span class="line">        x &#x3D; A;</span><br><span class="line">        A &#x3D; B;</span><br><span class="line">        B &#x3D; C;</span><br><span class="line">        C &#x3D; D;</span><br><span class="line">        D &#x3D; x;</span><br><span class="line">    &#125;</span><br><span class="line">    A +&#x3D; S[2 * r + 2];</span><br><span class="line">    C +&#x3D; S[2 * r + 3];</span><br><span class="line">    ct[0] &#x3D; A;</span><br><span class="line">    ct[1] &#x3D; B;</span><br><span class="line">    ct[2] &#x3D; C;</span><br><span class="line">    ct[3] &#x3D; D;</span><br><span class="line">    for (int i &#x3D; 0; i &lt; 4; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        cipher[4 * i] &#x3D; ct[i] &amp; 0xFF;</span><br><span class="line">        cipher[4 * i + 1] &#x3D; (ct[i] &gt;&gt; 8) &amp; 0xFF;</span><br><span class="line">        cipher[4 * i + 2] &#x3D; (ct[i] &gt;&gt; 16) &amp; 0xFF;</span><br><span class="line">        cipher[4 * i + 3] &#x3D; (ct[i] &gt;&gt; 24) &amp; 0xFF;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">void rc6_decrypt(unsigned char *cipher, unsigned char *plain)</span><br><span class="line">&#123;</span><br><span class="line">    WORD pt[4], ct[4];</span><br><span class="line">    for (int i &#x3D; 0; i &lt; 4; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        ct[i] &#x3D; cipher[4 * i] + (cipher[4 * i + 1] &lt;&lt; 8) + (cipher[4 * i + 2] &lt;&lt; 16) + (cipher[4 * i + 3] &lt;&lt; 24);</span><br><span class="line">    &#125;</span><br><span class="line">    WORD A, B, C, D, t, u, x;</span><br><span class="line">    A &#x3D; ct[0];</span><br><span class="line">    B &#x3D; ct[1];</span><br><span class="line">    C &#x3D; ct[2];</span><br><span class="line">    D &#x3D; ct[3];</span><br><span class="line">    C -&#x3D; S[2 * r + 3];</span><br><span class="line">    A -&#x3D; S[2 * r + 2];</span><br><span class="line">    for (int i &#x3D; 2 * r; i &gt;&#x3D; 2; i -&#x3D; 2)</span><br><span class="line">    &#123;</span><br><span class="line">        x &#x3D; D;</span><br><span class="line">        D &#x3D; C;</span><br><span class="line">        C &#x3D; B;</span><br><span class="line">        B &#x3D; A;</span><br><span class="line">        A &#x3D; x;</span><br><span class="line">        u &#x3D; ROTL(D * (2 * D + 1), lgw);</span><br><span class="line">        t &#x3D; ROTL(B * (2 * B + 1), lgw);</span><br><span class="line">        C &#x3D; ROTR(C - S[i + 1], t) ^ u;</span><br><span class="line">        A &#x3D; ROTR(A - S[i], u) ^ t;</span><br><span class="line">    &#125;</span><br><span class="line">    D -&#x3D; S[1];</span><br><span class="line">    B -&#x3D; S[0];</span><br><span class="line">    pt[0] &#x3D; A;</span><br><span class="line">    pt[1] &#x3D; B;</span><br><span class="line">    pt[2] &#x3D; C;</span><br><span class="line">    pt[3] &#x3D; D;</span><br><span class="line">    for (int i &#x3D; 0; i &lt; 4; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        plain[4 * i] &#x3D; pt[i] &amp; 0xFF;</span><br><span class="line">        plain[4 * i + 1] &#x3D; (pt[i] &gt;&gt; 8) &amp; 0xFF;</span><br><span class="line">        plain[4 * i + 2] &#x3D; (pt[i] &gt;&gt; 16) &amp; 0xFF;</span><br><span class="line">        plain[4 * i + 3] &#x3D; (pt[i] &gt;&gt; 24) &amp; 0xFF;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main(int argc, char const *argv[])</span><br><span class="line">&#123;</span><br><span class="line">    unsigned char key[] &#x3D; &#123;0x01,0x23,0x45,0x67,0x89,0xab,0xcd,0xef,0xfe,0xdc,0xba,0x98,0x76,0x54,0x32,0x10&#125;;</span><br><span class="line">    unsigned char cipher[] &#x3D;&#123;0xa5,0xf9,0x6e,0x68,0x22,0x3a,0x40,0xc9,0x7d,0xf2,0x38,0xa5,0x8b,0xc4,0xc7,0xa5&#125;;</span><br><span class="line">    </span><br><span class="line">    unsigned char plain[16];</span><br><span class="line">    rc6_keygen(key,16);</span><br><span class="line">    </span><br><span class="line">    rc6_decrypt(cipher,plain);</span><br><span class="line">    for (size_t i &#x3D; 0; i &lt; 16; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        printf(&quot;%x &quot;,plain[i]);</span><br><span class="line">    &#125;</span><br><span class="line">    puts(plain);</span><br><span class="line">    </span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; e_7he_heArt_Of_a</span><br></pre></td></tr></table></figure>
+
+<p>part3: <strong>e_7he_heArt_Of_a</strong></p>
+<p>part4:明文比对一个字节，剩下八个字节简单xor</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># &gt;&gt;&gt; hex(0x461F6348^0x2b2b2b2b)[2:].decode(&#39;hex&#39;)[::-1]</span><br><span class="line"># &#39;cH4m&#39;</span><br><span class="line"># &gt;&gt;&gt; hex(0x451B625B^0x2b2b2b2b)[2:].decode(&#39;hex&#39;)[::-1]</span><br><span class="line"># &#39;pI0n&#39;</span><br></pre></td></tr></table></figure>
+
+<p>最终得到flag</p>
+<p><strong>pLeA5e_nEveR_UnDeRe5t1m4te_7he_heArt_Of_a_cH4mpI0n</strong></p>
+<h3 id="MFC"><a href="#MFC" class="headerlink" title="MFC"></a><strong>MFC</strong></h3><p>简单mfc逆向，坑多了点，od大法好</p>
+<p>提交按钮disable，先patch使其enable先</p>
+<p>flag分为两个part，第一个part是smc（好像有反调试）od dump内存，patch回源文件重载进ida</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">((void (__fastcall *)(char *, int *, unsigned int))byte_11C5188)(&amp;v10, &amp;v12, a2);</span><br></pre></td></tr></table></figure>
+
+<p>如下所示，只有两个函数sub_59E070、sub_875231修改了flag，第一个显然是rc4算法（sbox已初始化完，不管），第二个函数显然是base64换表（+35）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">int __usercall sub_59E070@&lt;eax&gt;(int a1@&lt;xmm0&gt;, int a2, int a3)</span><br><span class="line">&#123;</span><br><span class="line"> sub_571BAF((int)&amp;unk_90903F);</span><br><span class="line">  v9 &#x3D; 0;</span><br><span class="line">  v8 &#x3D; 0;</span><br><span class="line">  for ( i &#x3D; 0; i &lt; a3; ++i )</span><br><span class="line">  &#123;</span><br><span class="line">    v9 &#x3D; (v9 + 1) % 256;</span><br><span class="line">    v8 &#x3D; (v8 + *((unsigned __int8 *)&amp;dword_875088 + v9)) % 256;</span><br><span class="line">    v5 &#x3D; *((_BYTE *)&amp;dword_875088 + v9);</span><br><span class="line">    *((_BYTE *)&amp;dword_875088 + v9) &#x3D; *((_BYTE *)&amp;dword_875088 + v8);</span><br><span class="line">    *((_BYTE *)&amp;dword_875088 + v8) &#x3D; v5;</span><br><span class="line">    v3 &#x3D; i + a2;</span><br><span class="line">    v4 &#x3D; i + a2;</span><br><span class="line">    *(_BYTE *)(i + a2) ^&#x3D; *((_BYTE *)&amp;dword_875088</span><br><span class="line">                          + (*((unsigned __int8 *)&amp;dword_875088 + v8) + *((unsigned __int8 *)&amp;dword_875088 + v9)) % 256);</span><br><span class="line">  &#125;</span><br><span class="line">  return sub_571D80(v4, v3, 1, i, a1);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">void __usercall sub_875231(int a1@&lt;edx&gt;, _BYTE *a2@&lt;ecx&gt;, int a3@&lt;ebp&gt;)</span><br><span class="line">&#123;</span><br><span class="line">if ( v7 !&#x3D; 2 )</span><br><span class="line">  &#123;</span><br><span class="line">    do</span><br><span class="line">    &#123;</span><br><span class="line">      v11 &#x3D; *(_BYTE *)(a1 + v9);</span><br><span class="line">      v8 &#x3D; (v11 &gt;&gt; 2) &amp; 0x3F;</span><br><span class="line">      v10 &#x3D; 16 * (v11 &amp; 3);</span><br><span class="line">      *v6 &#x3D; v8 + 35;</span><br><span class="line">      v5 &#x3D; *(_BYTE *)(*(_DWORD *)(a3 - 4) + v9 + 1);</span><br><span class="line">      v4 &#x3D; *(_DWORD *)(a3 - 4);</span><br><span class="line">      v6[1] &#x3D; ((v5 &gt;&gt; 4) &amp; 0xF | v10) + 35;</span><br><span class="line">      v13 &#x3D; *(_BYTE *)(v4 + v9 + 2);</span><br><span class="line">      v9 +&#x3D; 3;</span><br><span class="line">      v6[2] &#x3D; ((v13 &gt;&gt; 6) &amp; 3 | 4 * (v5 &amp; 0xF)) + 35;</span><br><span class="line">      v6[3] &#x3D; (v13 &amp; 0x3F) + 35;</span><br><span class="line">      v6 +&#x3D; 4;</span><br><span class="line">      a1 &#x3D; *(_DWORD *)(a3 - 4);</span><br><span class="line">    &#125;</span><br><span class="line">    while ( v9 &lt; v3 );</span><br><span class="line">    v7 &#x3D; *(_DWORD *)(a3 + 8);</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>直接od动态调试即可，这里根据常量”B=.NI;&3JBZ;$;?(I72’0&amp;4GLZDS2V6&amp;%AF.!5#+J[F^”的长度为44可以推测出flag_part1长度为33，然而这两个加密函数只对flag的前半部分进行加密，所以flag长度应该为66，od开调</p>
+<p>在加密函数入口点断下，修改内存为 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#39;************************************************************************&#39;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">.text:00EF11F0                 push    eax</span><br><span class="line">.text:00EF11F1                 call    sub_EBDD48</span><br></pre></td></tr></table></figure>
+
+<p>在check函数断下，查看内存，得到两个值</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">.text:00EE95F4                 push    offset aBNi3jbzI7204gl ; &quot;B&#x3D;.NI;&amp;3JBZ;$;?(I72&#39;0&amp;4GLZDS2V6&amp;%AF.!5#&quot;...</span><br><span class="line">.text:00EE95F9                 lea     eax, [ebp+var_7C]</span><br><span class="line">.text:00EE95FC                 push    eax</span><br><span class="line">.text:00EE95FD                 call    sub_EBD3F2</span><br></pre></td></tr></table></figure>
+
+<p>一个是我们的输入经过前面两个函数加密编码后的结果</p>
+<p>=C-?@RIQ@F&amp;-/P?8@a6?G4@O==D3CZ&gt;,VI.:F/67B^7,:?N</p>
+<p>另外一个是校验的常量</p>
+<p>$HM%/NEX,79PBN\C/BQLVSW,*/‘8T#UMC4%EG@@@,.%5</p>
+<p>根据RC4加密算法的原理，有 p1 ^ c1 = p2 ^ c2 (len(p1) == len(p2))，可以推出</p>
+<p>c2 = p1 ^ c1 ^ p2（len(p2) &gt; len(p1))</p>
+<p>ps:p1、p2为明文，c1、c2为密文</p>
+<p>再结合我们的明文</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#39;************************************&#39;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">import base64</span><br><span class="line">from Crypto.Util.number import long_to_bytes,bytes_to_long</span><br><span class="line">b64table &#x3D; &#39;ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+&#x2F;&#39;</span><br><span class="line">table &#x3D; &quot;#$%&amp;&#39;()*+,-.&#x2F;0123456789:;&lt;&#x3D;&gt;?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_&#96;ab&quot;</span><br><span class="line"></span><br><span class="line">def b64decode(src, table):</span><br><span class="line">    if len(table) !&#x3D; 64:</span><br><span class="line">        return &#39;Table length error&#39;</span><br><span class="line">    try:</span><br><span class="line">        dest &#x3D; base64.b64decode(</span><br><span class="line">        src.translate(str.maketrans(table, b64table)).encode())</span><br><span class="line">    except Exception as e:</span><br><span class="line">        return e</span><br><span class="line">    try:</span><br><span class="line">        dest &#x3D; dest.decode()</span><br><span class="line">    except UnicodeDecodeError as identifier:</span><br><span class="line">        pass</span><br><span class="line">    return dest</span><br><span class="line"></span><br><span class="line">dest &#x3D; &quot;&#x3D;C-?@RIQ@F&amp;-&#x2F;P?8@a6?G4@O&#x3D;&#x3D;D3CZ&gt;,VI.:F\&#x2F;67B^7,:?N&quot;</span><br><span class="line">tmp0 &#x3D; b&#39;*********************************************&#39;</span><br><span class="line">tmp1 &#x3D; &quot;$HM%&#x2F;NEX,79PBN\C&#x2F;BQLVSW,*&#x2F;&#39;8T#UMC4%EG@@@,.%5&quot;</span><br><span class="line">a1 &#x3D; b64decode(dest,table)</span><br><span class="line">a2 &#x3D; b64decode(tmp1,table)</span><br><span class="line"></span><br><span class="line">print(long_to_bytes(bytes_to_long(a1[:33])^bytes_to_long(a2[:33])^bytes_to_long(tmp0[:33])))</span><br></pre></td></tr></table></figure>
+
+<p> 三者xor即可得到flag_part1 <strong>Fr4nk1y_MfC_l5_t0O_ComPIeX_4nd_dl</strong></p>
+<p>flag_part2就比较简单了，显然就是一个普通的tea加密算法，delta的值被魔改为0x2433B95A</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">do</span><br><span class="line">&#123;</span><br><span class="line">  v9 +&#x3D; 0x2433B95A;</span><br><span class="line">  v6 +&#x3D; (v9 + v8) ^ (v21 + 16 * v8) ^ (v14 + (v8 &gt;&gt; 5));</span><br><span class="line">  v10 &#x3D; (v9 + v6) ^ (v19 + 16 * v6) ^ (v20 + (v6 &gt;&gt; 5));</span><br><span class="line">  v14 &#x3D; v18;</span><br><span class="line">  v15 &#x3D; v10 + v8;</span><br><span class="line">  --v7;</span><br><span class="line">  v8 &#x3D; v15;</span><br><span class="line">&#125;</span><br><span class="line">while ( v7 );</span><br></pre></td></tr></table></figure>
+
+<p>part2这里先校验了第一个字符是否为 ‘f’，剩下32个字节以8个字节为一组进行一次tea加密，每次加密密钥都不一样。然后就是算出加密后的密文，直接用key解密即可。</p>
+<p>密文有4组，其中一组明文给出，另外三组是一个三元一次方程（这里涉及到整数溢出）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; (v17 - v14) &#x3D;&#x3D; 0x3F66B755B4490579</span><br><span class="line">&#x2F;&#x2F; (v14 + v18) &#x3D;&#x3D; 0x162F924623D2CAE0</span><br><span class="line">&#x2F;&#x2F; (v18 - v17) &#x3D;&#x3D; 0x7C3C71F1B295D77F</span><br><span class="line">&#x2F;&#x2F; v14&lt;v17&lt;v18(无符号比较)</span><br></pre></td></tr></table></figure>
+
+<p>直接算得到的结果如下，显然不满足 v14&lt;v17&lt;v18</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; v18 &#x3D; 0x68e95dc6c558d3ec</span><br><span class="line">&#x2F;&#x2F; v17 &#x3D; 0xecacebd512c2fc6d</span><br><span class="line">&#x2F;&#x2F; v14 &#x3D; 0xad46347f5e79f6f4</span><br></pre></td></tr></table></figure>
+
+<p>所以这里 v14 + v18应该是溢出了，真正的方程应该为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; (v17 - v14) &#x3D;&#x3D; 0x3F66B755B4490579</span><br><span class="line">&#x2F;&#x2F; (v14 + v18) &#x3D;&#x3D; 0x1162F924623D2CAE0</span><br><span class="line">&#x2F;&#x2F; (v18 - v17) &#x3D;&#x3D; 0x7C3C71F1B295D77F</span><br></pre></td></tr></table></figure>
+
+<p>解出三个值</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 2d46347f5e79f6f4</span><br><span class="line">&#x2F;&#x2F; 6cacebd512c2fc6d</span><br><span class="line">&#x2F;&#x2F; e8e95dc6c558d3ec</span><br></pre></td></tr></table></figure>
+
+<p>然后直接tea解密得到part2</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;string.h&gt;</span><br><span class="line">void dec(unsigned int *ll,unsigned int *rr, unsigned int* key) &#123;</span><br><span class="line">  unsigned int l &#x3D; *ll, r &#x3D; *rr, sum &#x3D; 0, delta &#x3D; 0x2433B95A;</span><br><span class="line">  sum &#x3D; delta *32;</span><br><span class="line">  &#x2F;&#x2F; printf(&quot;%x,%x,%x,%x\n&quot;, key[0],key[1],key[2],key[3]);</span><br><span class="line">  for (size_t i &#x3D; 0; i &lt; 32; i++) &#123;</span><br><span class="line">    r -&#x3D; ((l &lt;&lt; 4) + key[2]) ^ (l + sum) ^ ((l &gt;&gt; 5) + key[3]);</span><br><span class="line">    l -&#x3D; ((r &lt;&lt; 4) + key[0]) ^ (r + sum) ^ ((r &gt;&gt; 5) + key[1]);</span><br><span class="line">    sum -&#x3D; delta;</span><br><span class="line">  &#125;</span><br><span class="line">  *ll &#x3D; l;</span><br><span class="line">  *rr &#x3D; r;</span><br><span class="line">  printf(&quot;&#39;%x&#39;,&#39;%x&#39;,&quot;, *ll,*rr);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void enc(unsigned int *ll,unsigned int *rr, unsigned int* key) &#123;</span><br><span class="line">  &#x2F;&#x2F; printf(&quot;%x,%x\n&quot;, *ll,*rr);</span><br><span class="line">  &#x2F;&#x2F; printf(&quot;%x,%x,%x,%x\n&quot;, key[0],key[1],key[2],key[3]);</span><br><span class="line">  unsigned int l &#x3D; *ll, r &#x3D; *rr, sum &#x3D; 0, delta &#x3D; 0x2433B95A;</span><br><span class="line">  for (size_t i &#x3D; 0; i &lt; 32; i++) &#123;</span><br><span class="line">    sum +&#x3D; delta;</span><br><span class="line">    l +&#x3D; ((r &lt;&lt; 4) + key[0]) ^ (r + sum) ^ ((r &gt;&gt; 5) + key[1]);</span><br><span class="line">    r +&#x3D; ((l &lt;&lt; 4) + key[2]) ^ (l + sum) ^ ((l &gt;&gt; 5) + key[3]);</span><br><span class="line">  &#125;</span><br><span class="line">  *ll &#x3D; l;</span><br><span class="line">  *rr &#x3D; r;</span><br><span class="line">  printf(&quot;0x%x,0x%x,\n&quot;, *ll,*rr);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">unsigned int key[]&#x3D;&#123;0x0D9610D02,0x2AADA57D,0x0A37537F1,0x0C29E3913,0x0D5942CE8,0x608CCE66,0x6D593422,0x21E5D6F2,0x0ED3A9235,0x9DAD62C4,0x3856641B,0x71F75B9D,0x0DCDEDAE8,0x0EAD2D1A0,0x0BAC4F564,0x0DA4772AC&#125;;</span><br><span class="line">int main(int argc, char const *argv[])</span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">  int ttt[] &#x3D; &#123;0x2d46347f,0x5e79f6f4,0xDF3634AE,0x2F9970FF,0x6cacebd5,0x12c2fc6d,0xe8e95dc6,0xc558d3ec&#125;;</span><br><span class="line">  for (size_t i &#x3D; 0; i &lt;4; i++)</span><br><span class="line">  &#123;</span><br><span class="line">    dec(ttt+2*i,ttt+1+2*i,key+4*i);</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>将得到的结果按小端序 decode即可</p>
+<p>flag_part2:<strong>ff1cUlt_foR_THe_r0Ok1E_t0_REver5e</strong></p>
+<p><strong>拼接得到flag</strong></p>
+<p><strong>Fr4nk1y_MfC_l5_t0O_ComPIeX_4nd_dlff1cUlt_foR_THe_r0Ok1E_t0_REver5e</strong></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/CTF/" rel="tag"><i class="fa fa-tag"></i>CTF</a>
+          
+            <a href="/tags/Reverse/" rel="tag"><i class="fa fa-tag"></i>Reverse</a>
+          
+            <a href="/tags/Writeup/" rel="tag"><i class="fa fa-tag"></i>Writeup</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/04/26/2020hfctf/" rel="next" title="2020数字中国创新大赛 虎符网络安全赛道 WP">
+                <i class="fa fa-chevron-left"></i> 2020数字中国创新大赛 虎符网络安全赛道 WP
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/01/09/2020XCTF-HUAWEICTF/" rel="prev" title="2020XCTF-华为系列专场 部分Writeup">
+                2020XCTF-华为系列专场 部分Writeup <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/feng.jpg"
+                alt="feng" />
+            
+              <p class="site-author-name" itemprop="name">feng</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yifeng-lee" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:feng@m.scnu.edu.cn" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#babyarm"><span class="nav-number">1.</span> <span class="nav-text">babyarm</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Exception"><span class="nav-number">2.</span> <span class="nav-text">Exception</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MFC"><span class="nav-number">3.</span> <span class="nav-text">MFC</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright"><font color=black face=STLiti>Copyright &nbsp;</font><font color=black>&copy;</font> <font color=black face=STLiti><span itemprop="copyrightYear">2021</span></font>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder" style="font-family:STLiti;color:black;">feng . All Rights Reserved.</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
